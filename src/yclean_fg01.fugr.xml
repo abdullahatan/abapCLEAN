@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>Helper Func.grp</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LYCLEAN_FG01TOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLYCLEAN_FG01</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>YCLEAN_FM01</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: BKPF &amp; BSEG_ADD</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BSTAT</PARAMETER>
+       <TYP>BSTAT_D</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BSTAT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Belge durumu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Belge numası</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM02</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: ACDOCA</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_KIND</PARAMETER>
+       <TYP>YCLEAN_DE01</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>FINS_LEDGER</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUDAT</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT01</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>JAHRPER</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>KIND_INVALID</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_KIND</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Kayıt Türü</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defteri kebir muhasebesindeki defter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUDAT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Budat Table Type Dat.</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Dönem/yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Belge numası</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>KIND_INVALID</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM03</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: ACDOCD</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>FINS_LEDGER</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>JAHRPER</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defteri kebir muhasebesindeki defter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Dönem/yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Belge numası</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM04</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: FAAT_DOC_IT</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Değerleme alanı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM05</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: FAAT_YDDA</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Değerleme alanı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM06</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: FAAT_PLAN_VALUES</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Değerleme alanı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM07</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: ANLB</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_AFABE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Değerleme alanı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
