@@ -49,7 +49,7 @@
     <item>
      <ID>I</ID>
      <KEY>S03</KEY>
-     <ENTRY>Paralel Process Seçimi...</ENTRY>
+     <ENTRY>Paralel İşleme Seçimi...</ENTRY>
      <LENGTH>50</LENGTH>
     </item>
     <item>
@@ -193,6 +193,12 @@
      <ENTRY>.</ENTRY>
      <LENGTH>14</LENGTH>
      <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_RZ12</KEY>
+     <ENTRY>Server group</ENTRY>
+     <LENGTH>20</LENGTH>
     </item>
     <item>
      <ID>S</ID>

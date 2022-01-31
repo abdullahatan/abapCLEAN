@@ -39,7 +39,8 @@ SELECTION-SCREEN END OF BLOCK b2.
 
 SELECTION-SCREEN SKIP 2.
 SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-s03.
-  PARAMETERS: p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 1 OBLIGATORY MODIF ID md8.
+  PARAMETERS: p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 1 OBLIGATORY MODIF ID md8,
+              p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID md9.
 SELECTION-SCREEN END OF BLOCK b3.
 
 CLASS application DEFINITION DEFERRED.
@@ -55,6 +56,10 @@ CLASS application DEFINITION .
   PUBLIC SECTION.
     CLASS-DATA:
       app TYPE REF TO application.
+
+    CONSTANTS: BEGIN OF mc_cons,
+                 rz12 TYPE fieldname VALUE 'P_RZ12',
+               END OF mc_cons.
 
     DATA: mv_tabname  TYPE char40,
           mv_taskname TYPE char20,
@@ -77,7 +82,10 @@ CLASS application DEFINITION .
       listbox_build,
       f4_finanscal_perio
         CHANGING
-          ch_spmon TYPE s031-spmon,
+          cv_spmon TYPE s031-spmon,
+      f4_server_group
+        CHANGING
+          cv_rz12 TYPE rzlli_apcl,
       retrieve_dat
         EXCEPTIONS
           contains_error,
@@ -132,12 +140,12 @@ CLASS application IMPLEMENTATION .
             IF screen-group1 EQ 'MD5'.
               screen-input = 0.
             ENDIF.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD6'  OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           app_session->mv_tabname = TEXT-t01.
         WHEN p_rb2.
-          IF screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8'.
+          IF screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 1.
           ELSEIF screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD5'.
             screen-active = 0.
@@ -148,7 +156,7 @@ CLASS application IMPLEMENTATION .
                 screen-active = 1.
               ENDIF.
             WHEN p_rb2b.
-              IF screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD8'.
+              IF screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
                 screen-active = 0.
               ENDIF.
           ENDCASE.
@@ -156,7 +164,7 @@ CLASS application IMPLEMENTATION .
         WHEN p_rb3.
           IF screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD7'.
             screen-active = 1.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           app_session->mv_tabname = TEXT-t03.
@@ -164,7 +172,7 @@ CLASS application IMPLEMENTATION .
           IF screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD6'.
             screen-active = 1.
             screen-input = 0.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           FREE: s_afabe[].
@@ -174,7 +182,7 @@ CLASS application IMPLEMENTATION .
           IF screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD6'.
             screen-active = 1.
             screen-input = 0.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           FREE: s_afabe[].
@@ -184,7 +192,7 @@ CLASS application IMPLEMENTATION .
           IF screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD6'.
             screen-active = 1.
             screen-input = 0.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           FREE: s_afabe[].
@@ -194,7 +202,7 @@ CLASS application IMPLEMENTATION .
           IF screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD6'.
             screen-active = 1.
             screen-input = 0.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           FREE: s_afabe[].
@@ -207,6 +215,13 @@ CLASS application IMPLEMENTATION .
   ENDMETHOD.                    "at_selection_screen_output
   METHOD at_selection_screen_request.
 
+    CASE iv_fieldname.
+      WHEN 'P_RZ12'.
+        app->f4_server_group(
+          CHANGING
+            cv_rz12 = p_rz12 ).
+      WHEN OTHERS.
+    ENDCASE.
 
   ENDMETHOD.                    "at_selection_screen_request
   METHOD start_of_selection.
@@ -279,10 +294,33 @@ CLASS application IMPLEMENTATION .
         month_not_found            = 3
         OTHERS                     = 4.
     IF sy-subrc = 0 AND l_returncode1 = 0.
-      ch_spmon = l_monat1.
+      cv_spmon = l_monat1.
     ENDIF.
 
   ENDMETHOD.                    "f4_finanscal_perio
+  METHOD f4_server_group.
+
+    DATA: return_tab TYPE STANDARD TABLE OF ddshretval.
+    SELECT classname, applserver, grouptype FROM rzllitab INTO TABLE @DATA(t_rzllitab) WHERE grouptype EQ 'S'.
+    IF sy-subrc IS INITIAL.
+      FREE: return_tab.
+      CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+        EXPORTING
+          retfield    = 'CLASSNAME'
+          dynpprog    = sy-repid
+          dynpnr      = sy-dynnr
+          dynprofield = 'P_RZ12'
+          value_org   = 'S'
+        TABLES
+          value_tab   = t_rzllitab
+          return_tab  = return_tab.
+      READ TABLE return_tab REFERENCE INTO DATA(_return) INDEX 1.
+      IF sy-subrc IS INITIAL.
+        cv_rz12 = _return->fieldval.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.                    "f4_server_group
   METHOD retrieve_dat.
 
     DATA: _where  TYPE string,
@@ -330,7 +368,7 @@ CLASS application IMPLEMENTATION .
               mv_taskname = |ACDOCA_{ p_gjahr }{ p_monat }_{ p_rldnr }/T{ _splitdat->line }|.
               mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-              CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+              CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
                 EXPORTING
                   iv_kind      = 'RB1'
                   iv_rldnr     = p_rldnr

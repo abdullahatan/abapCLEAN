@@ -13,6 +13,11 @@ LOAD-OF-PROGRAM.
 INITIALIZATION.
   app_session->initialization( ).
 
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_rz12.
+  app_session->at_selection_screen_request(
+    EXPORTING
+      iv_fieldname = app_session->mc_cons-rz12 ).
+
 AT SELECTION-SCREEN.
   app_session->at_selection_screen( ).
 
