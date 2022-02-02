@@ -221,6 +221,48 @@
      <TEXTPOOL>
       <item>
        <ID>I</ID>
+       <KEY>H01</KEY>
+       <ENTRY>Record deletion steps</ENTRY>
+       <LENGTH>23</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P01</KEY>
+       <ENTRY>ACDOCA - Posting period</ENTRY>
+       <LENGTH>46</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P02</KEY>
+       <ENTRY>ACDOCA - Carry Forward Period</ENTRY>
+       <LENGTH>40</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>Q01</KEY>
+       <ENTRY>table records will be deleted from database. Do you want to continue?</ENTRY>
+       <LENGTH>124</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>S01</KEY>
+       <ENTRY>Execution Criterias</ENTRY>
+       <LENGTH>50</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>S02</KEY>
+       <ENTRY>Selection Criterias</ENTRY>
+       <LENGTH>50</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>S03</KEY>
+       <ENTRY>Parallel Processing Options</ENTRY>
+       <LENGTH>50</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
        <KEY>T01</KEY>
        <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
        <LENGTH>15</LENGTH>
@@ -230,6 +272,47 @@
        <KEY>T02</KEY>
        <ENTRY>ACDOCA</ENTRY>
        <LENGTH>6</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T03</KEY>
+       <ENTRY>ACDOCD</ENTRY>
+       <LENGTH>6</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T04</KEY>
+       <ENTRY>FAAT_DOC_IT</ENTRY>
+       <LENGTH>11</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T05</KEY>
+       <ENTRY>FAAT_YDDA</ENTRY>
+       <LENGTH>9</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T06</KEY>
+       <ENTRY>FAAT_PLAN_VALUES</ENTRY>
+       <LENGTH>16</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T07</KEY>
+       <ENTRY>ANLB</ENTRY>
+       <LENGTH>28</LENGTH>
+      </item>
+      <item>
+       <ID>R</ID>
+       <ENTRY>Database Cleaning Program</ENTRY>
+       <LENGTH>70</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>P_PRLL</KEY>
+       <ENTRY>Number of processes</ENTRY>
+       <LENGTH>38</LENGTH>
       </item>
       <item>
        <ID>S</ID>
@@ -258,7 +341,7 @@
       <item>
        <ID>S</ID>
        <KEY>P_RB3</KEY>
-       <ENTRY>ACDOCA</ENTRY>
+       <ENTRY>ACDOCD</ENTRY>
        <LENGTH>38</LENGTH>
       </item>
       <item>
@@ -277,6 +360,18 @@
        <ID>S</ID>
        <KEY>P_RB6</KEY>
        <ENTRY>FAAT_PLAN_VALUES</ENTRY>
+       <LENGTH>38</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>P_RB7</KEY>
+       <ENTRY>ANLB</ENTRY>
+       <LENGTH>38</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>P_RZ12</KEY>
+       <ENTRY>Server group</ENTRY>
        <LENGTH>38</LENGTH>
       </item>
       <item>

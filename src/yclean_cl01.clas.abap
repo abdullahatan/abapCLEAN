@@ -58,8 +58,6 @@ CLASS yclean_cl01 DEFINITION
           VALUE(iv_rldnr)  TYPE fins_ledger
           VALUE(iv_bukrs)  TYPE bukrs
           VALUE(iv_gjahr)  TYPE gjahr
-          VALUE(iv_spmon)  TYPE jahrper
-          VALUE(iv_belnr)  TYPE string
         EXPORTING
           VALUE(ev_subrc)  TYPE syst_subrc
           VALUE(ev_result) TYPE string
@@ -231,21 +229,18 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
     DECLARE numberofentities NUMBER(10);
 
-    t_acdocd = SELECT DISTINCT rldnr, rbukrs, gjahr, belnr
+    t_result = SELECT DISTINCT rldnr, rbukrs, gjahr, belnr
                  FROM acdocd
                    WHERE rclnt  = Session_context('CLIENT')
                      AND rldnr  = :iv_rldnr
                      AND rbukrs = :iv_bukrs
-                     AND gjahr  = :iv_gjahr
-                     AND fiscyearper = :iv_spmon;
-*-> Apply filter->
-    t_result = APPLY_FILTER ( :t_acdocd, :iv_belnr);
+                     AND gjahr  = :iv_gjahr;
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
     IF numberofentities <> 0.
     THEN
-*        DELETE FROM acdocd as db WHERE( db.rclnt, db.rldnr, db.rbukrs, db.gjahr, db.belnr )
-*                                    IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
+        DELETE FROM acdocd as db WHERE( db.rclnt, db.rldnr, db.rbukrs, db.gjahr, db.belnr )
+                                    IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
 
         SELECT COUNT (*) INTO numberofentities FROM acdocd WHERE( rclnt, rldnr, rbukrs, gjahr, belnr )
                                                               IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
@@ -376,6 +371,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
                      FOR HDB
                      LANGUAGE SQLSCRIPT
                      USING anlb.
+
 
     DECLARE numberofentities NUMBER(10);
 

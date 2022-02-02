@@ -5,8 +5,6 @@ FUNCTION yclean_fm03.
 *"     VALUE(IV_RLDNR) TYPE  FINS_LEDGER
 *"     VALUE(IV_BUKRS) TYPE  BUKRS
 *"     VALUE(IV_GJAHR) TYPE  GJAHR
-*"     VALUE(IV_SPMON) TYPE  JAHRPER OPTIONAL
-*"     VALUE(IV_BELNR) TYPE  STRING OPTIONAL
 *"     VALUE(IV_LOGID) TYPE  BALNREXT
 *"----------------------------------------------------------------------
 
@@ -16,7 +14,7 @@ FUNCTION yclean_fm03.
       iv_log_subobject = mc_logger-_subobject
       iv_extnumber = iv_logid ).
 
-  _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '002' iv_msgv1 = TEXT-t03 iv_msgv2 = |{ TEXT-p03 }:{ iv_rldnr }| iv_msgv3 = |{ TEXT-p01 }:{ iv_bukrs }| iv_msgv4 = |{ TEXT-p04 }:{ iv_spmon+4(3) }.{ iv_spmon(4) }| ).
+  _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '002' iv_msgv1 = TEXT-t03 iv_msgv2 = |{ TEXT-p03 }:{ iv_rldnr }| iv_msgv3 = |{ TEXT-p01 }:{ iv_bukrs }| iv_msgv4 = |{ TEXT-p05 }:{ iv_gjahr }| ).
   _logger->post( iv_refresh = abap_true iv_commit = abap_true ).
   TRY.
       yclean_cl01=>_rb3_rundat(
@@ -24,8 +22,6 @@ FUNCTION yclean_fm03.
           iv_rldnr  = iv_rldnr
           iv_bukrs  = iv_bukrs
           iv_gjahr  = iv_gjahr
-          iv_spmon  = iv_spmon
-          iv_belnr  = iv_belnr
         IMPORTING
           ev_subrc  = DATA(_subrc)
           ev_result = DATA(_result) ).

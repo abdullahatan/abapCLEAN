@@ -50,6 +50,12 @@
      <MSGNR>006</MSGNR>
      <TEXT>İşlem türü &amp; geçerisiz!</TEXT>
     </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>ACDOCA işleminde hata! Lütfen BKPF\BSEG_ADD işlemini tamamlayınız.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

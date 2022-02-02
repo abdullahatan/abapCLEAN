@@ -165,16 +165,6 @@
        <TYP>GJAHR</TYP>
       </RSIMP>
       <RSIMP>
-       <PARAMETER>IV_SPMON</PARAMETER>
-       <OPTIONAL>X</OPTIONAL>
-       <TYP>JAHRPER</TYP>
-      </RSIMP>
-      <RSIMP>
-       <PARAMETER>IV_BELNR</PARAMETER>
-       <OPTIONAL>X</OPTIONAL>
-       <TYP>STRING</TYP>
-      </RSIMP>
-      <RSIMP>
        <PARAMETER>IV_LOGID</PARAMETER>
        <TYP>BALNREXT</TYP>
       </RSIMP>
@@ -194,16 +184,6 @@
        <PARAMETER>IV_GJAHR</PARAMETER>
        <KIND>P</KIND>
        <STEXT>Mali yıl</STEXT>
-      </RSFDO>
-      <RSFDO>
-       <PARAMETER>IV_SPMON</PARAMETER>
-       <KIND>P</KIND>
-       <STEXT>Dönem/yıl</STEXT>
-      </RSFDO>
-      <RSFDO>
-       <PARAMETER>IV_BELNR</PARAMETER>
-       <KIND>P</KIND>
-       <STEXT>Belge numası</STEXT>
       </RSFDO>
       <RSFDO>
        <PARAMETER>IV_LOGID</PARAMETER>
@@ -357,6 +337,85 @@
      </DOCUMENTATION>
     </item>
    </FUNCTIONS>
+   <I18N_TPOOL>
+    <item>
+     <LANGUAGE>E</LANGUAGE>
+     <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>P01</KEY>
+       <ENTRY>CoCode</ENTRY>
+       <LENGTH>13</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P02</KEY>
+       <ENTRY>Document status</ENTRY>
+       <LENGTH>22</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P03</KEY>
+       <ENTRY>Ledger</ENTRY>
+       <LENGTH>16</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P04</KEY>
+       <ENTRY>Period/year</ENTRY>
+       <LENGTH>19</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P05</KEY>
+       <ENTRY>Fiscal year</ENTRY>
+       <LENGTH>18</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T01</KEY>
+       <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
+       <LENGTH>15</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T02</KEY>
+       <ENTRY>ACDOCA</ENTRY>
+       <LENGTH>6</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T03</KEY>
+       <ENTRY>ACDOCD</ENTRY>
+       <LENGTH>6</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T04</KEY>
+       <ENTRY>FAAT_DOC_IT</ENTRY>
+       <LENGTH>11</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T05</KEY>
+       <ENTRY>FAAT_YDDA</ENTRY>
+       <LENGTH>9</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T06</KEY>
+       <ENTRY>FAAT_PLAN_VALUES</ENTRY>
+       <LENGTH>16</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T07</KEY>
+       <ENTRY>ANLB</ENTRY>
+       <LENGTH>14</LENGTH>
+      </item>
+     </TEXTPOOL>
+    </item>
+   </I18N_TPOOL>
   </asx:values>
  </asx:abap>
 </abapGit>

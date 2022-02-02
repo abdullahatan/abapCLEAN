@@ -86,6 +86,9 @@ CLASS application DEFINITION .
       f4_server_group
         CHANGING
           cv_rz12 TYPE rzlli_apcl,
+      rundat_control
+        EXCEPTIONS
+          contains_error,
       retrieve_dat
         EXCEPTIONS
           contains_error,
@@ -162,9 +165,9 @@ CLASS application IMPLEMENTATION .
           ENDCASE.
           app_session->mv_tabname = TEXT-t02.
         WHEN p_rb3.
-          IF screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD3' OR screen-group1 EQ 'MD7'.
+          IF screen-group1 EQ 'MD1' OR screen-group1 EQ 'MD2' OR screen-group1 EQ 'MD3'.
             screen-active = 1.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'MD4' OR screen-group1 EQ 'MD5' OR screen-group1 EQ 'MD6' OR screen-group1 EQ 'MD7' OR screen-group1 EQ 'MD8' OR screen-group1 EQ 'MD9'.
             screen-active = 0.
           ENDIF.
           app_session->mv_tabname = TEXT-t03.
@@ -321,235 +324,266 @@ CLASS application IMPLEMENTATION .
     ENDIF.
 
   ENDMETHOD.                    "f4_server_group
-  METHOD retrieve_dat.
+  METHOD rundat_control.
 
-    DATA: _where  TYPE string,
-          _result TYPE string.
-
-    CHECK popup_confirm( im_titlebar = TEXT-h01 im_question = |{ mv_tabname } { TEXT-q01 }| ) EQ '1'.
     CASE abap_true.
+      WHEN p_rb2.
+        SELECT bkpf~* FROM bkpf
+          INNER JOIN acdoca ON acdoca~rbukrs = bkpf~bukrs AND acdoca~belnr  = bkpf~belnr AND acdoca~gjahr  = bkpf~gjahr
+            INTO TABLE @DATA(_bkpf) UP TO 1 ROWS
+              WHERE acdoca~rbukrs = @p_bukrs
+                AND acdoca~bstat  = @p_bstat.
+
+        SELECT bseg_add~* FROM bseg_add
+          INNER JOIN acdoca ON acdoca~rbukrs = bseg_add~bukrs AND acdoca~belnr  = bseg_add~belnr AND acdoca~gjahr  = bseg_add~gjahr
+            INTO TABLE @DATA(_bseg_add) UP TO 1 ROWS
+              WHERE acdoca~rbukrs = @p_bukrs
+                AND acdoca~bstat  = @p_bstat.
+
+          IF _bkpf[] IS NOT INITIAL OR _bseg_add[] IS NOT INITIAL.
+            MESSAGE e007(yclean) RAISING contains_error.
+          ENDIF.
+      ENDCASE.
+
+    ENDMETHOD.                    "rundat_control
+    METHOD retrieve_dat.
+
+      DATA: _where  TYPE string,
+            _result TYPE string.
+
+*--------------------------------------------------------------------*
+*-&Run controls->
+*--------------------------------------------------------------------*
+      app->rundat_control(
+        EXCEPTIONS
+          contains_error = 1
+          OTHERS         = 2 ).
+      IF sy-subrc <> 0.
+        MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 DISPLAY LIKE 'E'. RETURN.
+      ENDIF.
+
+      CHECK popup_confirm( im_titlebar = TEXT-h01 im_question = |{ mv_tabname } { TEXT-q01 }| ) EQ '1'.
+      CASE abap_true.
 *--------------------------------------------------------------------*
 *-&Step-1: Delete From BKPF & BSEG_ADD ->
 *--------------------------------------------------------------------*
-      WHEN p_rb1.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'BELNR' dref = REF #( s_belnr[] ) ) ) ).
+        WHEN p_rb1.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'BELNR' dref = REF #( s_belnr[] ) ) ) ).
 
-        CLEAR: mv_logid, mv_taskname.
-        mv_taskname = |BKPF_BSEG_ADD|.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |BKPF_BSEG_ADD|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-        CALL FUNCTION 'YCLEAN_FM01' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_bukrs = p_bukrs
-            iv_bstat = p_bstat
-            iv_belnr = _where
-            iv_logid = mv_logid.
+          CALL FUNCTION 'YCLEAN_FM01' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_bukrs = p_bukrs
+              iv_bstat = p_bstat
+              iv_belnr = _where
+              iv_logid = mv_logid.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t01 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t01 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
 *--------------------------------------------------------------------*
 *-&Step-2: Delete From ACDOCA ->
 *--------------------------------------------------------------------*
-      WHEN p_rb2.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'BELNR' dref = REF #( s_belnr[] ) ) ) ).
+        WHEN p_rb2.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'BELNR' dref = REF #( s_belnr[] ) ) ) ).
 
-        CASE abap_true.
-          WHEN p_rb2a.
-            DATA(t_splitdat) = NEW yclean_cl01( )->_period_splitdat(
-              EXPORTING
-                  im_spmon = CONV #( |{ p_gjahr }{ p_monat }| )
-                  im_split = p_prll ).
+          CASE abap_true.
+            WHEN p_rb2a.
+              DATA(t_splitdat) = NEW yclean_cl01( )->_period_splitdat(
+                EXPORTING
+                    im_spmon = CONV #( |{ p_gjahr }{ p_monat }| )
+                    im_split = p_prll ).
 
-            DATA(_output) = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
-            LOOP AT t_splitdat REFERENCE INTO DATA(_splitdat).
+              DATA(_output) = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
+              LOOP AT t_splitdat REFERENCE INTO DATA(_splitdat).
+                CLEAR: mv_logid, mv_taskname.
+                mv_taskname = |ACDOCA_{ p_gjahr }{ p_monat }_{ p_rldnr }/T{ _splitdat->line }|.
+                mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+
+                CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
+                  EXPORTING
+                    iv_kind      = 'RB1'
+                    iv_rldnr     = p_rldnr
+                    iv_bukrs     = p_bukrs
+                    iv_gjahr     = p_gjahr
+                    iv_spmon     = CONV jahrper( |{ p_gjahr }0{ p_monat }| )
+                    iv_budat     = _splitdat->budat
+                    iv_belnr     = _where
+                    iv_logid     = mv_logid
+                  EXCEPTIONS
+                    kind_invalid = 1
+                    OTHERS       = 2.
+
+                _output->write_text( |{ mv_logid ALPHA = OUT }| ).
+              ENDLOOP.
+
+            WHEN p_rb2b.
               CLEAR: mv_logid, mv_taskname.
-              mv_taskname = |ACDOCA_{ p_gjahr }{ p_monat }_{ p_rldnr }/T{ _splitdat->line }|.
+              mv_taskname = |ADCDOCA_{ p_gjahr }000_{ p_rldnr }|.
               mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-              CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
+              CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
                 EXPORTING
                   iv_kind      = 'RB1'
                   iv_rldnr     = p_rldnr
                   iv_bukrs     = p_bukrs
                   iv_gjahr     = p_gjahr
-                  iv_spmon     = CONV jahrper( |{ p_gjahr }0{ p_monat }| )
-                  iv_budat     = _splitdat->budat
+                  iv_spmon     = CONV jahrper( |{ p_gjahr }000| )
                   iv_belnr     = _where
                   iv_logid     = mv_logid
                 EXCEPTIONS
                   kind_invalid = 1
                   OTHERS       = 2.
+              _output->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
-              _output->write_text( |{ mv_logid ALPHA = OUT }| ).
-            ENDLOOP.
-
-          WHEN p_rb2b.
-            CLEAR: mv_logid, mv_taskname.
-            mv_taskname = |ADCDOCA_{ p_gjahr }000_{ p_rldnr }|.
-            mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
-
-            CALL FUNCTION 'YCLEAN_FM02' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-              EXPORTING
-                iv_kind      = 'RB1'
-                iv_rldnr     = p_rldnr
-                iv_bukrs     = p_bukrs
-                iv_gjahr     = p_gjahr
-                iv_spmon     = CONV jahrper( |{ p_gjahr }000| )
-                iv_belnr     = _where
-                iv_logid     = mv_logid
-              EXCEPTIONS
-                kind_invalid = 1
-                OTHERS       = 2.
-            _output->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
-
-        ENDCASE.
-        _output->display( ).
+          ENDCASE.
+          _output->display( ).
 
 *--------------------------------------------------------------------*
 *-&Step-3: Delete From ACDOCD ->
 *--------------------------------------------------------------------*
-      WHEN p_rb3.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'BELNR' dref = REF #( s_belnr[] ) ) ) ).
+        WHEN p_rb3.
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |ACDOCD_{ p_gjahr }_{ p_rldnr }|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-        CLEAR: mv_logid, mv_taskname.
-        mv_taskname = |ACDOCD_{ p_gjahr }0{ p_monat }_{ p_rldnr }|.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          CALL FUNCTION 'YCLEAN_FM03' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_rldnr = p_rldnr
+              iv_bukrs = p_bukrs
+              iv_gjahr = p_gjahr
+              iv_logid = mv_logid.
 
-        CALL FUNCTION 'YCLEAN_FM03' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_rldnr = p_rldnr
-            iv_bukrs = p_bukrs
-            iv_gjahr = p_gjahr
-            iv_spmon = CONV jahrper( |{ p_gjahr }0{ p_monat }| )
-            iv_belnr = _where
-            iv_logid = mv_logid.
-
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t03 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t03 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
 *--------------------------------------------------------------------*
 *-&Step-4: Delete From FAAT_DOC_IT ->
 *--------------------------------------------------------------------*
-      WHEN p_rb4.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
+        WHEN p_rb4.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
 
-        CLEAR: mv_logid, mv_taskname.
-        mv_taskname = |FAAT_DOC_IT|.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |FAAT_DOC_IT|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-        CALL FUNCTION 'YCLEAN_FM04' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_bukrs = p_bukrs
-            iv_afabe = _where
-            iv_logid = mv_logid.
+          CALL FUNCTION 'YCLEAN_FM04' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_bukrs = p_bukrs
+              iv_afabe = _where
+              iv_logid = mv_logid.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t04 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t04 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
 *--------------------------------------------------------------------*
 *-&Step-5: Delete From FAAT_YDDA ->
 *--------------------------------------------------------------------*
-      WHEN p_rb5.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
-        CLEAR: mv_logid, mv_taskname.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
-        mv_logid = |FM05_{ generate_guid( ) }|.
+        WHEN p_rb5.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
+          CLEAR: mv_logid, mv_taskname.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          mv_logid = |FM05_{ generate_guid( ) }|.
 
-        CALL FUNCTION 'YCLEAN_FM05' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_bukrs = p_bukrs
-            iv_afabe = _where
-            iv_logid = mv_logid.
+          CALL FUNCTION 'YCLEAN_FM05' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_bukrs = p_bukrs
+              iv_afabe = _where
+              iv_logid = mv_logid.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t05 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t05 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
 *--------------------------------------------------------------------*
 *-&Step-6: Delete From FAAT_PLAN_VALUES ->
 *--------------------------------------------------------------------*
-      WHEN p_rb6.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
+        WHEN p_rb6.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
 
-        CLEAR: mv_logid, mv_taskname.
-        mv_taskname = |FAAT_PLAN_VALUES|.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |FAAT_PLAN_VALUES|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-        CALL FUNCTION 'YCLEAN_FM06' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_bukrs = p_bukrs
-            iv_afabe = _where
-            iv_logid = mv_logid.
+          CALL FUNCTION 'YCLEAN_FM06' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_bukrs = p_bukrs
+              iv_afabe = _where
+              iv_logid = mv_logid.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t06 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
-      WHEN p_rb7.
-        CLEAR: _where.
-        _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t06 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+*--------------------------------------------------------------------*
+*-&Step-7: Delete From ANLB ->
+*--------------------------------------------------------------------*
+        WHEN p_rb7.
+          CLEAR: _where.
+          _where = cl_shdb_seltab=>combine_seltabs( it_named_seltabs = VALUE #( ( name = 'AFABE' dref = REF #( s_afabe[] ) ) ) ).
 
-        CLEAR: mv_logid, mv_taskname.
-        mv_taskname = |ANLB|.
-        mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |ANLB|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-        CALL FUNCTION 'YCLEAN_FM07' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
-          EXPORTING
-            iv_bukrs = p_bukrs
-            iv_afabe = _where
-            iv_logid = mv_logid.
+          CALL FUNCTION 'YCLEAN_FM07' STARTING NEW TASK mv_taskname DESTINATION 'NONE'
+            EXPORTING
+              iv_bukrs = p_bukrs
+              iv_afabe = _where
+              iv_logid = mv_logid.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t07 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t07 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
-    ENDCASE.
+      ENDCASE.
 
-  ENDMETHOD .                    "retrieve_dat
-  METHOD generate_guid.
-    CALL FUNCTION 'GUID_CREATE'
-      IMPORTING
-        ev_guid_16 = rv_guid.
-  ENDMETHOD .                    "generate_guid
-  METHOD popup_confirm.
+    ENDMETHOD .                    "retrieve_dat
+    METHOD generate_guid.
+      CALL FUNCTION 'GUID_CREATE'
+        IMPORTING
+          ev_guid_16 = rv_guid.
+    ENDMETHOD .                    "generate_guid
+    METHOD popup_confirm.
 
-    CALL FUNCTION 'POPUP_TO_CONFIRM'
-      EXPORTING
-        titlebar              = im_titlebar
-        text_question         = im_question
-        text_button_1         = 'Evet'
-        text_button_2         = 'Hayır'
-        popup_type            = 'ICON_MESSAGE_CRITICAL'
-        default_button        = '2'
-        display_cancel_button = abap_true
-      IMPORTING
-        answer                = rv_answer
-      EXCEPTIONS
-        text_not_found        = 1
-        OTHERS                = 2.
+      CALL FUNCTION 'POPUP_TO_CONFIRM'
+        EXPORTING
+          titlebar              = im_titlebar
+          text_question         = im_question
+          text_button_1         = 'Evet'
+          text_button_2         = 'Hayır'
+          popup_type            = 'ICON_MESSAGE_CRITICAL'
+          default_button        = '2'
+          display_cancel_button = abap_true
+        IMPORTING
+          answer                = rv_answer
+        EXCEPTIONS
+          text_not_found        = 1
+          OTHERS                = 2.
 
-  ENDMETHOD.                    "popup_confirm
-  METHOD show_message_tool.
+    ENDMETHOD.                    "popup_confirm
+    METHOD show_message_tool.
 
-    CHECK iv_msgdat[] IS NOT INITIAL.
+      CHECK iv_msgdat[] IS NOT INITIAL.
 
-    DATA: lt_message_tab TYPE esp1_message_tab_type,
-          lr_message_tab TYPE REF TO esp1_message_wa_type,
-          lr_messtab     TYPE REF TO bapiret2.
+      DATA: lt_message_tab TYPE esp1_message_tab_type,
+            lr_message_tab TYPE REF TO esp1_message_wa_type,
+            lr_messtab     TYPE REF TO bapiret2.
 
 
-    LOOP AT iv_msgdat REFERENCE INTO lr_messtab.
-      APPEND INITIAL LINE TO lt_message_tab
-         REFERENCE INTO lr_message_tab.
-      lr_message_tab->msgty = lr_messtab->type       .
-      lr_message_tab->msgid = lr_messtab->id         .
-      lr_message_tab->msgno = lr_messtab->number     .
-      lr_message_tab->msgv1 = lr_messtab->message_v1 .
-      lr_message_tab->msgv2 = lr_messtab->message_v2 .
-      lr_message_tab->msgv3 = lr_messtab->message_v3 .
-      lr_message_tab->msgv4 = lr_messtab->message_v4 .
-    ENDLOOP.
+      LOOP AT iv_msgdat REFERENCE INTO lr_messtab.
+        APPEND INITIAL LINE TO lt_message_tab
+           REFERENCE INTO lr_message_tab.
+        lr_message_tab->msgty = lr_messtab->type       .
+        lr_message_tab->msgid = lr_messtab->id         .
+        lr_message_tab->msgno = lr_messtab->number     .
+        lr_message_tab->msgv1 = lr_messtab->message_v1 .
+        lr_message_tab->msgv2 = lr_messtab->message_v2 .
+        lr_message_tab->msgv3 = lr_messtab->message_v3 .
+        lr_message_tab->msgv4 = lr_messtab->message_v4 .
+      ENDLOOP.
 
-    CALL FUNCTION 'C14Z_MESSAGES_SHOW_AS_POPUP'
-      TABLES
-        i_message_tab = lt_message_tab[].
+      CALL FUNCTION 'C14Z_MESSAGES_SHOW_AS_POPUP'
+        TABLES
+          i_message_tab = lt_message_tab[].
 
-  ENDMETHOD.                    "show_message_tool
+    ENDMETHOD.                    "show_message_tool
 ENDCLASS .                    "application IMPLEMENTATION
