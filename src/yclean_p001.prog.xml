@@ -12,6 +12,18 @@
    <TPOOL>
     <item>
      <ID>I</ID>
+     <KEY>D01</KEY>
+     <ENTRY>Evet</ENTRY>
+     <LENGTH>4</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>D02</KEY>
+     <ENTRY>Hayır</ENTRY>
+     <LENGTH>5</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>H01</KEY>
      <ENTRY>Kayıt Silme Adımları...</ENTRY>
      <LENGTH>23</LENGTH>
@@ -19,14 +31,26 @@
     <item>
      <ID>I</ID>
      <KEY>P01</KEY>
-     <ENTRY>ACDOCA - Kayıt Dönemi</ENTRY>
-     <LENGTH>46</LENGTH>
+     <ENTRY>BKPF\BSEG_ADD - Standartlaştırılan Belge Kayıtları</ENTRY>
+     <LENGTH>82</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>P02</KEY>
+     <ENTRY>BKPF - Ana Defterde Olmayan Kayıtlar</ENTRY>
+     <LENGTH>58</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>P03</KEY>
+     <ENTRY>ACDOCA - Kayıt Dönemi</ENTRY>
+     <LENGTH>42</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>P04</KEY>
      <ENTRY>ACDOCA - Devir Dönemi</ENTRY>
-     <LENGTH>40</LENGTH>
+     <LENGTH>42</LENGTH>
     </item>
     <item>
      <ID>I</ID>
@@ -214,11 +238,30 @@
      <LENGTH>22</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_LDGRP</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>20</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
    </TPOOL>
    <I18N_TPOOL>
     <item>
      <LANGUAGE>E</LANGUAGE>
      <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>D01</KEY>
+       <ENTRY>Yes</ENTRY>
+       <LENGTH>4</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>D02</KEY>
+       <ENTRY>No</ENTRY>
+       <LENGTH>5</LENGTH>
+      </item>
       <item>
        <ID>I</ID>
        <KEY>H01</KEY>
@@ -228,14 +271,26 @@
       <item>
        <ID>I</ID>
        <KEY>P01</KEY>
-       <ENTRY>ACDOCA - Posting period</ENTRY>
-       <LENGTH>46</LENGTH>
+       <ENTRY>BKPF\BSEG_ADD - Posting in General Ledger Only</ENTRY>
+       <LENGTH>82</LENGTH>
       </item>
       <item>
        <ID>I</ID>
        <KEY>P02</KEY>
+       <ENTRY>BKPF - Posting Not in Leading Ledger</ENTRY>
+       <LENGTH>58</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P03</KEY>
+       <ENTRY>ACDOCA - Posting period</ENTRY>
+       <LENGTH>42</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>P04</KEY>
        <ENTRY>ACDOCA - Carry Forward Period</ENTRY>
-       <LENGTH>40</LENGTH>
+       <LENGTH>42</LENGTH>
       </item>
       <item>
        <ID>I</ID>
@@ -421,6 +476,13 @@
        <KEY>S_BELNR</KEY>
        <ENTRY>.</ENTRY>
        <LENGTH>22</LENGTH>
+       <SPLIT>D</SPLIT>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>S_LDGRP</KEY>
+       <ENTRY>.</ENTRY>
+       <LENGTH>20</LENGTH>
        <SPLIT>D</SPLIT>
       </item>
      </TEXTPOOL>

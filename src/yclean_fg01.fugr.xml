@@ -14,12 +14,25 @@
      <SHORT_TEXT>Clean: BKPF &amp; BSEG_ADD</SHORT_TEXT>
      <IMPORT>
       <RSIMP>
+       <PARAMETER>IV_KIND</PARAMETER>
+       <TYP>YCLEAN_DE01</TYP>
+      </RSIMP>
+      <RSIMP>
        <PARAMETER>IV_BUKRS</PARAMETER>
        <TYP>BUKRS</TYP>
       </RSIMP>
       <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
        <PARAMETER>IV_BSTAT</PARAMETER>
        <TYP>BSTAT_D</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LDGRP</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>STRING</TYP>
       </RSIMP>
       <RSIMP>
        <PARAMETER>IV_BELNR</PARAMETER>
@@ -31,16 +44,39 @@
        <TYP>BALNREXT</TYP>
       </RSIMP>
      </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>PARAMETER_ERROR</EXCEPTION>
+      </RSEXC>
+      <RSEXC>
+       <EXCEPTION>KIND_INVALID</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
      <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_KIND</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>İşlem Türü</STEXT>
+      </RSFDO>
       <RSFDO>
        <PARAMETER>IV_BUKRS</PARAMETER>
        <KIND>P</KIND>
        <STEXT>Şirket kodu</STEXT>
       </RSFDO>
       <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
        <PARAMETER>IV_BSTAT</PARAMETER>
        <KIND>P</KIND>
        <STEXT>Belge durumu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LDGRP</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defter grubu</STEXT>
       </RSFDO>
       <RSFDO>
        <PARAMETER>IV_BELNR</PARAMETER>
@@ -51,6 +87,14 @@
        <PARAMETER>IV_LOGID</PARAMETER>
        <KIND>P</KIND>
        <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>PARAMETER_ERROR</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>KIND_INVALID</PARAMETER>
+       <KIND>X</KIND>
       </RSFDO>
      </DOCUMENTATION>
     </item>
@@ -411,6 +455,12 @@
        <ID>I</ID>
        <KEY>T07</KEY>
        <ENTRY>ANLB</ENTRY>
+       <LENGTH>14</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>T08</KEY>
+       <ENTRY>BKPF</ENTRY>
        <LENGTH>14</LENGTH>
       </item>
      </TEXTPOOL>

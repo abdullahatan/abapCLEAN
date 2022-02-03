@@ -30,7 +30,7 @@
      <SPRSL>T</SPRSL>
      <ARBGB>YCLEAN</ARBGB>
      <MSGNR>003</MSGNR>
-     <TEXT>&amp; : Kayıt silme işlemi başarıyla tamamlandı.</TEXT>
+     <TEXT>&amp; : Kayıt silme işlemi başarıyla tamamlandı. Silinen kayıt: &amp;</TEXT>
     </T100>
     <T100>
      <SPRSL>T</SPRSL>
@@ -55,6 +55,12 @@
      <ARBGB>YCLEAN</ARBGB>
      <MSGNR>007</MSGNR>
      <TEXT>ACDOCA işleminde hata! Lütfen BKPF\BSEG_ADD işlemini tamamlayınız.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>008</MSGNR>
+     <TEXT>Giriş parametresi &amp; &amp; &amp; &amp; boş geçilemez!</TEXT>
     </T100>
    </T100>
   </asx:values>

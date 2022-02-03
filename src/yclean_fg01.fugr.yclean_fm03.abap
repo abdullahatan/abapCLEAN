@@ -24,9 +24,10 @@ FUNCTION yclean_fm03.
           iv_gjahr  = iv_gjahr
         IMPORTING
           ev_subrc  = DATA(_subrc)
+          ev_rowcnt = DATA(_rowcnt)
           ev_result = DATA(_result) ).
       IF _subrc IS INITIAL.
-        _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '003' iv_msgv1 = TEXT-t03 ).
+        _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '003' iv_msgv1 = TEXT-t03 iv_msgv2 = |{ _rowcnt NUMBER = USER }| ).
       ELSE.
         _logger->add_error( iv_msgid = mc_msg-id iv_msgno = '004' iv_msgv1 = TEXT-t03 iv_msgv2 = _result ).
       ENDIF.
