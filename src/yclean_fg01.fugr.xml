@@ -380,6 +380,129 @@
       </RSFDO>
      </DOCUMENTATION>
     </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM08</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: PRCD_ELEMENTS -&gt;Save Dat.</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_RKIND</PARAMETER>
+       <TYP>YCLEAN_DE02</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_FKART</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>FKART</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IT_FKDAT</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT02</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_WHERE</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>STRING</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_KAPPL</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>KAPPL</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_KWERT</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>VFPRC_ELEMENT_VALUE</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IT_KSCHL</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT03</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>SPMON</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BCKUP</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>ABAP_BOOLEAN</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>PARAMETER_ERROR</EXCEPTION>
+      </RSEXC>
+      <RSEXC>
+       <EXCEPTION>KIND_INVALID</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_RKIND</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Clean: PRCD_ELEMENTS Run Kind</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_FKART</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Faturalama türü</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IT_FKDAT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Fkdat Table Type Dat.</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_WHERE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>FKDAT &amp; BZIRK Filter Dat.</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_KAPPL</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_KWERT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Koşul değeri</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IT_KSCHL</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Koşul türü</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_SPMON</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Analiz dönemi - ay</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BCKUP</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Veri yedeklensin mi? (Evet = &apos;X&apos;, Hayır = &apos;&apos;)</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>PARAMETER_ERROR</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>KIND_INVALID</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
    </FUNCTIONS>
    <I18N_TPOOL>
     <item>

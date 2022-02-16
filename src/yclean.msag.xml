@@ -62,6 +62,54 @@
      <MSGNR>008</MSGNR>
      <TEXT>Giriş parametresi &amp; &amp; &amp; &amp; boş geçilemez!</TEXT>
     </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>009</MSGNR>
+     <TEXT>&amp; : Kayıt yedekleme işlemi başlatıldı. &amp; &amp; &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>010</MSGNR>
+     <TEXT>&amp; : Kayıt yedekleme işlemi başarıyla tamamlandı. Kayıt sayısı: &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>&amp; : Kayıt yedekleme işlemi başarısız! Hata: &amp; &amp; &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>012</MSGNR>
+     <TEXT>Silme işleminde hata! Lütfen önce aynı seçimler için yedekleme yapınız.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>013</MSGNR>
+     <TEXT>AMDP Error: &amp; &amp; &amp; &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>014</MSGNR>
+     <TEXT>&amp; : Kayıt geri yükleme işlemi başlatıldı. &amp; &amp; &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>015</MSGNR>
+     <TEXT>&amp; : Kayıt geri yükleme işlemi başarıyla tamamlandı. Kayıt sayısı: &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>016</MSGNR>
+     <TEXT>&amp; : Kayıt geri yükleme işlemi başarısız! Hata: &amp; &amp; &amp;</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

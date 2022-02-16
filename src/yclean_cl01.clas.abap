@@ -148,7 +148,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_acdoca, :iv_belnr);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM bkpf as db WHERE( db.mandt, db.bukrs, db.belnr, db.gjahr )
@@ -182,7 +182,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_bkpf, :iv_ldgrp);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM bkpf as db WHERE( db.mandt, db.bukrs, db.belnr, db.gjahr )
@@ -190,7 +190,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM bkpf WHERE( mandt, bukrs, belnr, gjahr )
                                                             IN ( SELECT Session_context( 'CLIENT' ), bukrs, belnr, gjahr FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -222,7 +222,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_acdoca, :iv_belnr);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM acdoca as db WHERE( db.rclnt, db.rldnr, db.rbukrs, db.gjahr, db.belnr )
@@ -230,7 +230,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM acdoca WHERE( rclnt, rldnr, rbukrs, gjahr, belnr )
                                                               IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -263,7 +263,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_acdoca, :iv_belnr);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM acdoca as db WHERE( db.rclnt, db.rldnr, db.rbukrs, db.gjahr, db.belnr )
@@ -271,7 +271,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM acdoca WHERE( rclnt, rldnr, rbukrs, gjahr, belnr )
                                                               IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -301,7 +301,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
                      AND gjahr  = :iv_gjahr;
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM acdocd as db WHERE( db.rclnt, db.rldnr, db.rbukrs, db.gjahr, db.belnr )
@@ -309,7 +309,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM acdocd WHERE( rclnt, rldnr, rbukrs, gjahr, belnr )
                                                               IN ( SELECT Session_context( 'CLIENT' ), rldnr, rbukrs, gjahr, belnr FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -338,7 +338,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_faat_doc_it, :iv_afabe);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM faat_doc_it as db WHERE( db.mandt, db.bukrs, db.anln1, db.anln2, db.gjahr, db.awtyp, db.awref, db.aworg, db.awsys, db.subta, db.afabe, db.slalittype, db.drcrk )
@@ -346,7 +346,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM faat_doc_it WHERE( mandt, bukrs, anln1, anln2, gjahr, awtyp, awref, aworg, awsys, subta, afabe, slalittype, drcrk )
                                                                    IN ( SELECT Session_context( 'CLIENT' ), bukrs, anln1, anln2, gjahr, awtyp, awref, aworg, awsys, subta, afabe, slalittype, drcrk FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -375,7 +375,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
      t_result = APPLY_FILTER ( :t_faat_ydda, :iv_afabe);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM faat_ydda as db WHERE( db.mandt, db.bukrs, db.anln1, db.anln2, db.gjahr, db.afabe )
@@ -383,7 +383,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM faat_ydda WHERE( mandt, bukrs, anln1, anln2, gjahr, afabe )
                                                                  IN ( SELECT Session_context( 'CLIENT' ), bukrs, anln1, anln2, gjahr, afabe FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -412,7 +412,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_faat_plan_values, :iv_afabe);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM faat_plan_values as db WHERE( db.mandt, db.bukrs, db.anln1, db.anln2, db.gjahr, db.afabe, db.poper, db.slalittype )
@@ -420,7 +420,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*)  INTO numberofentities FROM faat_plan_values WHERE( mandt, bukrs, anln1, anln2, gjahr, afabe, poper, slalittype )
                                                                          IN ( SELECT Session_context( 'CLIENT' ), bukrs, anln1, anln2, gjahr, afabe, poper, slalittype FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -451,7 +451,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
     t_result = APPLY_FILTER ( :t_anlb, :iv_afabe);
 
     SELECT COUNT (*) INTO numberofentities FROM :t_result;
-    IF numberofentities <> 0.
+    IF numberofentities <> 0
     THEN
         ev_rowcnt = :numberofentities;
         DELETE FROM anlb as db WHERE( db.mandt, db.bukrs, db.anln1, db.anln2, db.afabe, db.bdatu )
@@ -459,7 +459,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
 
         SELECT COUNT (*) INTO numberofentities FROM anlb WHERE( mandt, bukrs, anln1, anln2, afabe, bdatu )
                                                             IN ( SELECT Session_context( 'CLIENT' ), bukrs, anln1, anln2, afabe, bdatu FROM :t_result );
-        IF numberofentities = 0.
+        IF numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
