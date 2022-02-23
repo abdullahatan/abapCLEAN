@@ -43,7 +43,7 @@ CLASS yclean_cl02 DEFINITION
         VALUE(it_kschl)  TYPE tt_kschl
       EXPORTING
         VALUE(ev_subrc)  TYPE syst_subrc
-        VALUE(ev_rowcnt) TYPE syst_tabix
+        VALUE(ev_rowcnt) TYPE syst-tabix
         VALUE(ev_result) TYPE string
       RAISING
         cx_amdp_error .
@@ -58,7 +58,7 @@ CLASS yclean_cl02 DEFINITION
         VALUE(it_kschl)  TYPE tt_kschl
       EXPORTING
         VALUE(ev_subrc)  TYPE syst_subrc
-        VALUE(ev_rowcnt) TYPE syst_tabix
+        VALUE(ev_rowcnt) TYPE syst-tabix
         VALUE(ev_result) TYPE string
       RAISING
         cx_amdp_error .
@@ -88,7 +88,6 @@ CLASS yclean_cl02 DEFINITION
         VALUE(ev_result) TYPE string
       RAISING
         cx_amdp_error .
-
     CLASS-METHODS _period_splitdat
       IMPORTING
         !im_spmon          TYPE spmon
@@ -156,23 +155,23 @@ CLASS yclean_cl02 IMPLEMENTATION.
                      FOR HDB
                      LANGUAGE SQLSCRIPT
                      USING vbrk prcd_elements.
-
 *&---------------------------------------------------------------------*
 *&  PRCD_ELMENTS Delete Dat->
 *&---------------------------------------------------------------------*
 
-    DECLARE numberofentities NUMBER(10);
+    DECLARE numberofentities INTEGER :=0;
+    DECLARE _knumv VARCHAR(10);
 
     t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
-                    FROM vbrk
-                    WHERE mandt = Session_context('CLIENT')
-                      AND fkart = :iv_fkart
-                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat );
+                FROM vbrk
+                WHERE mandt = Session_context('CLIENT')
+                  AND fkart = :iv_fkart
+                  AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
 
 *-> Apply filter->
     t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
 
-    t_prcddat = SELECT DISTINCT prcd.client, prcd.knumv, prcd.kposn, prcd.stunr, prcd.zaehk
+    t_resultdat = SELECT DISTINCT prcd.knumv
                     FROM prcd_elements AS prcd
                     WHERE prcd.client = Session_context('CLIENT')
                       AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
@@ -180,17 +179,43 @@ CLASS yclean_cl02 IMPLEMENTATION.
                       AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
                       AND prcd.kwert = :iv_kwert;
 
-    SELECT COUNT (*) INTO numberofentities FROM :t_prcddat;
-    IF numberofentities <> 0
+    SELECT COUNT ( * ) INTO numberofentities
+        FROM prcd_elements AS prcd
+        WHERE prcd.client = Session_context('CLIENT')
+          AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+          AND prcd.kappl = :iv_kappl
+          AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND prcd.kwert = :iv_kwert;
+    IF numberofentities > 0
     THEN
         ev_rowcnt = :numberofentities;
 
-*        DELETE FROM prcd_elements as db WHERE( db.client, db.knumv, db.kposn, db.stunr, db.zaehk )
-*                                           IN ( SELECT Session_context( 'CLIENT' ), knumv, kposn, stunr, zaehk FROM :t_prcddat );
+        BEGIN
+            DECLARE CURSOR cDelete FOR SELECT knumv FROM :t_resultdat;
+            OPEN cDelete;
+            WHILE 1 <> 2 DO
+                FETCH cDelete INTO _knumv;
+                IF cDelete::NOTFOUND THEN
+                    BREAK;
+               ELSE
+                    DELETE FROM prcd_elements
+                        WHERE client = Session_context('CLIENT')
+                          AND knumv = _knumv
+                          AND kappl = :iv_kappl
+                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+                          AND kwert = :iv_kwert;
+                END IF;
+            END WHILE;
+        END;
 
-        SELECT COUNT (*) INTO numberofentities FROM prcd_elements
-            WHERE( client, knumv, kposn, stunr, zaehk ) IN ( SELECT session_context( 'CLIENT' ), knumv, kposn, stunr, zaehk FROM :t_prcddat );
-        IF numberofentities = 0
+        SELECT COUNT ( * ) INTO numberofentities
+            FROM prcd_elements AS prcd
+            WHERE prcd.client = Session_context('CLIENT')
+              AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+              AND prcd.kappl = :iv_kappl
+              AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+              AND prcd.kwert = :iv_kwert;
+        IF :numberofentities = 0
         THEN
             ev_subrc = 0;
             ev_result = 'Entity has been deleted successfully.';
@@ -213,7 +238,7 @@ CLASS yclean_cl02 IMPLEMENTATION.
 *&  PRCD_ELMENTS Restored Dat->
 *&---------------------------------------------------------------------*
 
-    DECLARE numberofentities NUMBER(10);
+    DECLARE numberofentities INTEGER :=0;
 
     t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
                     FROM vbrk
@@ -225,25 +250,19 @@ CLASS yclean_cl02 IMPLEMENTATION.
     t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
 
     t_cleandat = SELECT DISTINCT prcd.*
-                    FROM yclean_t01 AS clean
-                    INNER JOIN zprcd_elements AS prcd
-                        ON prcd.client = clean.client AND
-                           prcd.knumv = clean.knumv AND
-                           prcd.kposn = clean.kposn AND
-                           prcd.stunr = clean.stunr AND
-                           prcd.zaehk = clean.zaehk
-                    WHERE clean.client = Session_context('CLIENT')
-                      AND clean.knumv in( SELECT DISTINCT knumv FROM :t_vbrk_result );
+                    FROM zprcd_elements AS prcd
+                    WHERE( client, knumv, kposn, stunr, zaehk)
+                       IN( SELECT client, knumv, kposn, stunr, zaehk FROM  yclean_t01 WHERE knumv IN( SELECT knumv FROM :t_vbrk_result ) );
 
-    SELECT COUNT (*) INTO numberofentities FROM :t_cleandat;
-    IF numberofentities <> 0
+
+    numberofentities = RECORD_COUNT(:t_cleandat);
+    IF numberofentities > 0
     THEN
         ev_rowcnt = :numberofentities;
 
-*        UPSERT prcd_elements SELECT * FROM :t_cleandat;
+        UPSERT prcd_elements SELECT * FROM :t_cleandat;
 
-        SELECT COUNT (*) INTO numberofentities FROM prcd_elements AS db
-            WHERE( db.client, db.knumv, db.kposn, db.stunr, db.zaehk ) IN ( SELECT DISTINCT Session_context( 'CLIENT' ), knumv, kposn, stunr, zaehk FROM :t_cleandat );
+        SELECT ::ROWCOUNT INTO numberofentities FROM DUMMY;
         IF numberofentities = :ev_rowcnt
         THEN
             ev_subrc = 0;
@@ -279,16 +298,16 @@ CLASS yclean_cl02 IMPLEMENTATION.
 *-> Apply filter->
     t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
 
-    SELECT COUNT (*) INTO _prdc_rowcount FROM prcd_elements AS prcd
-        INNER JOIN :t_vbrk_result AS vbrk ON prcd.knumv = vbrk.knumv
-            WHERE prcd.client = Session_context('CLIENT')
-              AND prcd.kappl = :iv_kappl
-              AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-              AND prcd.kwert = :iv_kwert;
+    SELECT COUNT( * ) INTO _prdc_rowcount
+        FROM prcd_elements AS prcd
+        WHERE PRCD.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
+          AND PRCD.KAPPL = :iv_kappl
+          AND PRCD.KSCHL IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND PRCD.KWERT = :iv_kwert;
 
-      SELECT COUNT (*) INTO _save_rowcount FROM yclean_t01 AS clean
-          INNER JOIN :t_vbrk_result AS vbrk ON clean.knumv = vbrk.knumv
-              WHERE clean.client = Session_context('CLIENT');
+    SELECT COUNT( * ) INTO _save_rowcount
+        FROM yclean_t01 as prcd
+            WHERE prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result );
 
     IF _save_rowcount <> _prdc_rowcount
     THEN

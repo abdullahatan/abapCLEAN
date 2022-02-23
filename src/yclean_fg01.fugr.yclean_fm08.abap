@@ -60,7 +60,7 @@ FUNCTION yclean_fm08.
 *&  PRCD_ELMENTS Delete Dat->
 *&---------------------------------------------------------------------*
     WHEN yclean_cl02=>mc_cons-delete.
-      _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '009' iv_msgv1 = TEXT-t10 iv_msgv2 = |{ TEXT-p06 }:{ iv_fkart }| iv_msgv3 = |{ TEXT-p04 }:{ iv_spmon+4(2) }.{ iv_spmon(4) }| ).
+      _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '002' iv_msgv1 = TEXT-t10 iv_msgv2 = |{ TEXT-p06 }:{ iv_fkart }| iv_msgv3 = |{ TEXT-p04 }:{ iv_spmon+4(2) }.{ iv_spmon(4) }| ).
       _logger->post( iv_refresh = abap_true ).
       TRY.
           CLEAR: _subrc, _rowcnt, _result.
@@ -77,9 +77,9 @@ FUNCTION yclean_fm08.
                 ev_rowcnt = _rowcnt
                 ev_result = _result ).
           IF _subrc IS INITIAL.
-            _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '010' iv_msgv1 = TEXT-t10 iv_msgv2 = |{ _rowcnt NUMBER = USER }| ).
+            _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '003' iv_msgv1 = TEXT-t10 iv_msgv2 = |{ _rowcnt NUMBER = USER }| ).
           ELSE.
-            _logger->add_error( iv_msgid = mc_msg-id iv_msgno = '011' iv_msgv1 = TEXT-t10 iv_msgv2 = _result ).
+            _logger->add_error( iv_msgid = mc_msg-id iv_msgno = '004' iv_msgv1 = TEXT-t10 iv_msgv2 = _result ).
           ENDIF.
         CATCH cx_amdp_error INTO lv_exp.
           CLEAR: _msgdat. _msgdat = lv_exp->get_text( ).
