@@ -411,6 +411,9 @@ CLASS application IMPLEMENTATION .
               iv_fkart = p_fkart
               it_fkdat = _splitdat->fkdat[]
               iv_where = _where
+              iv_kappl = p_kappl
+              iv_kwert = p_kwert
+              it_kschl = mt_kschl
               iv_spmon = p_spmon
               iv_logid = mv_logid.
 

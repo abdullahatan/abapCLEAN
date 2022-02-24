@@ -68,6 +68,9 @@ CLASS yclean_cl02 DEFINITION
         VALUE(iv_fkart)  TYPE fkart
         VALUE(it_fkdat)  TYPE tt_fkdat
         VALUE(iv_where)  TYPE string
+        VALUE(iv_kappl)  TYPE kappl
+        VALUE(iv_kwert)  TYPE vfprc_element_value
+        VALUE(it_kschl)  TYPE tt_kschl
       EXPORTING
         VALUE(ev_subrc)  TYPE syst_subrc
         VALUE(ev_rowcnt) TYPE syst_tabix
@@ -239,30 +242,59 @@ CLASS yclean_cl02 IMPLEMENTATION.
 *&---------------------------------------------------------------------*
 
     DECLARE numberofentities INTEGER :=0;
+    DECLARE _knumv VARCHAR(10);
 
     t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
                     FROM vbrk
                     WHERE mandt = Session_context('CLIENT')
                       AND fkart = :iv_fkart
-                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat );
+                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
 
 *-> Apply filter->
     t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
 
-    t_cleandat = SELECT DISTINCT prcd.*
-                    FROM zprcd_elements AS prcd
-                    WHERE( client, knumv, kposn, stunr, zaehk)
-                       IN( SELECT client, knumv, kposn, stunr, zaehk FROM  yclean_t01 WHERE knumv IN( SELECT knumv FROM :t_vbrk_result ) );
+    t_resultdat = SELECT DISTINCT knumv
+                    FROM yclean_t01
+                    WHERE( knumv ) IN( SELECT DISTINCT knumv FROM :t_vbrkdat ) WITH HINT(NO_INLINE);
 
+    SELECT DISTINCT COUNT ( * ) INTO numberofentities
+        FROM zprcd_elements AS prcd
+        WHERE client = Session_context('CLIENT')
+          AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+          AND kappl = :iv_kappl
+          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND kwert = :iv_kwert;
 
-    numberofentities = RECORD_COUNT(:t_cleandat);
     IF numberofentities > 0
     THEN
+
         ev_rowcnt = :numberofentities;
 
-        UPSERT prcd_elements SELECT * FROM :t_cleandat;
+        BEGIN
+            DECLARE CURSOR cRestore FOR SELECT knumv FROM :t_resultdat;
+            OPEN cRestore;
+            WHILE 1 <> 2 DO
+                FETCH cRestore INTO _knumv;
+                IF cRestore::NOTFOUND THEN
+                    BREAK;
+                ELSE
+                    UPSERT prcd_elements SELECT * FROM zprcd_elements
+                        WHERE client = Session_context('CLIENT')
+                          AND knumv = _knumv
+                          AND kappl = :iv_kappl
+                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+                          AND kwert = :iv_kwert;
+                END IF;
+            END WHILE;
+        END;
 
-        SELECT ::ROWCOUNT INTO numberofentities FROM DUMMY;
+        SELECT DISTINCT COUNT ( * ) INTO numberofentities
+            FROM prcd_elements AS prcd
+            WHERE client = Session_context('CLIENT')
+              AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+              AND kappl = :iv_kappl
+              AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+              AND kwert = :iv_kwert;
         IF numberofentities = :ev_rowcnt
         THEN
             ev_subrc = 0;
@@ -275,6 +307,8 @@ CLASS yclean_cl02 IMPLEMENTATION.
         ev_subrc = 4;
         ev_result = 'Your entried value is not valid.';
     END IF;
+
+
 
   ENDMETHOD.
   METHOD _delete_before BY DATABASE PROCEDURE
@@ -300,10 +334,10 @@ CLASS yclean_cl02 IMPLEMENTATION.
 
     SELECT COUNT( * ) INTO _prdc_rowcount
         FROM prcd_elements AS prcd
-        WHERE PRCD.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
-          AND PRCD.KAPPL = :iv_kappl
-          AND PRCD.KSCHL IN( SELECT DISTINCT kschl FROM :it_kschl )
-          AND PRCD.KWERT = :iv_kwert;
+        WHERE prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
+          AND prcd.kappl = :iv_kappl
+          AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND prcd.kwert = :iv_kwert;
 
     SELECT COUNT( * ) INTO _save_rowcount
         FROM yclean_t01 as prcd

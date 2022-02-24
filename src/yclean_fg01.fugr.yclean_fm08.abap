@@ -100,6 +100,9 @@ FUNCTION yclean_fm08.
                 iv_fkart = iv_fkart
                 it_fkdat = it_fkdat
                 iv_where = iv_where
+                iv_kappl = iv_kappl
+                iv_kwert = iv_kwert
+                it_kschl = it_kschl
               IMPORTING
                 ev_subrc  = _subrc
                 ev_rowcnt = _rowcnt
