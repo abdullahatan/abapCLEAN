@@ -6,6 +6,7 @@ FUNCTION yclean_fm02.
 *"     VALUE(IV_RLDNR) TYPE  FINS_LEDGER
 *"     VALUE(IV_BUKRS) TYPE  BUKRS
 *"     VALUE(IV_GJAHR) TYPE  GJAHR
+*"     VALUE(IV_BSTAT) TYPE  BSTAT_D OPTIONAL
 *"     VALUE(IV_BUDAT) TYPE  YCLEAN_TT01 OPTIONAL
 *"     VALUE(IV_SPMON) TYPE  JAHRPER OPTIONAL
 *"     VALUE(IV_BELNR) TYPE  STRING OPTIONAL
@@ -55,6 +56,7 @@ FUNCTION yclean_fm02.
               iv_rldnr  = iv_rldnr
               iv_bukrs  = iv_bukrs
               iv_gjahr  = iv_gjahr
+              iv_bstat  = iv_bstat
               iv_spmon  = iv_spmon
               iv_belnr  = iv_belnr
             IMPORTING

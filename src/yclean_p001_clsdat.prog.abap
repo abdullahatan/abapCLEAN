@@ -56,6 +56,10 @@ SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-s03.
               p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID m10.
 SELECTION-SCREEN END OF BLOCK b3.
 
+SELECTION-SCREEN BEGIN OF BLOCK b4 WITH FRAME TITLE TEXT-s04.
+  PARAMETERS: p_cb1 AS CHECKBOX DEFAULT ''.
+SELECTION-SCREEN END OF BLOCK b4.
+
 CLASS application DEFINITION DEFERRED.
 DATA: app_session TYPE REF TO application.
 
@@ -121,8 +125,7 @@ CLASS application DEFINITION .
   PRIVATE SECTION.
     DATA: mt_msgdat TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
 
-
-ENDCLASS .                    "application DEFINITION
+ENDCLASS.                    "application DEFINITION
 
 *----------------------------------------------------------------------*
 *       CLASS application IMPLEMENTATION
@@ -179,15 +182,19 @@ CLASS application IMPLEMENTATION .
         WHEN p_rb2.
           IF screen-group1 EQ 'M01' OR screen-group1 EQ 'M02' OR screen-group1 EQ 'M03' OR screen-group1 EQ 'M04' OR screen-group1 EQ 'M07' OR screen-group1 EQ 'M09' OR screen-group1 EQ 'M10'.
             screen-active = 1.
-          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'M06' OR screen-group1 EQ 'M05' OR screen-group1 EQ 'M08'.
+          ELSEIF screen-group1 EQ 'RD2' OR screen-group1 EQ 'M06' OR screen-group1 EQ 'M08'.
             screen-active = 0.
           ENDIF.
           CASE abap_true.
             WHEN p_rb2a.
-              IF screen-group1 EQ 'M04' .
-                screen-active = 1.
+              IF screen-group1 EQ 'M05'.
+                screen-active = 0.
               ENDIF.
             WHEN p_rb2b.
+              p_bstat = 'C'.
+              IF screen-group1 EQ 'M05'.
+                screen-input = 0.
+              ENDIF.
               IF screen-group1 EQ 'M04' OR screen-group1 EQ 'M09' OR screen-group1 EQ 'M10'.
                 screen-active = 0.
               ENDIF.
@@ -300,11 +307,12 @@ CLASS application IMPLEMENTATION .
 
     FREE: _values, _id.
     _id = 'P_RLDNR'.
-    _values = VALUE #( BASE _values ( key = 'ML' ) ( key = 'IF' ) ).
+    _values = VALUE #( BASE _values ( key = 'AL' ) ( key = 'ML' ) ( key = 'IF' ) ).
     CALL FUNCTION 'VRM_SET_VALUES'
       EXPORTING
         id     = _id
         values = _values.
+
 
   ENDMETHOD.                    "listbox_build
   METHOD f4_finanscal_perio.
@@ -445,7 +453,9 @@ CLASS application IMPLEMENTATION .
               MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 RAISING contains_error. RETURN.
             ENDIF.
         ENDCASE.
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t01 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t01 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 
 *--------------------------------------------------------------------*
 *-&Step-2: Delete From ACDOCA ->
@@ -495,16 +505,19 @@ CLASS application IMPLEMENTATION .
                 iv_rldnr     = p_rldnr
                 iv_bukrs     = p_bukrs
                 iv_gjahr     = p_gjahr
+                iv_bstat     = p_bstat
                 iv_spmon     = CONV jahrper( |{ p_gjahr }000| )
                 iv_belnr     = _where
                 iv_logid     = mv_logid
               EXCEPTIONS
                 kind_invalid = 1
                 OTHERS       = 2.
-            _output->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 
+            _output->write_text( |{ mv_logid ALPHA = OUT }| ).
         ENDCASE.
-        _output->display( ).
+        IF p_cb1 EQ abap_false.
+          _output->display( ).
+        ENDIF.
 
 *--------------------------------------------------------------------*
 *-&Step-3: Delete From ACDOCD ->
@@ -520,8 +533,9 @@ CLASS application IMPLEMENTATION .
             iv_bukrs = p_bukrs
             iv_gjahr = p_gjahr
             iv_logid = mv_logid.
-
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t03 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t03 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 
 *--------------------------------------------------------------------*
 *-&Step-4: Delete From FAAT_DOC_IT ->
@@ -539,8 +553,9 @@ CLASS application IMPLEMENTATION .
             iv_bukrs = p_bukrs
             iv_afabe = _where
             iv_logid = mv_logid.
-
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t04 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t04 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 
 *--------------------------------------------------------------------*
 *-&Step-5: Delete From FAAT_YDDA ->
@@ -558,9 +573,9 @@ CLASS application IMPLEMENTATION .
             iv_bukrs = p_bukrs
             iv_afabe = _where
             iv_logid = mv_logid.
-
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t05 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
-
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t05 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 *--------------------------------------------------------------------*
 *-&Step-6: Delete From FAAT_PLAN_VALUES ->
 *--------------------------------------------------------------------*
@@ -577,8 +592,10 @@ CLASS application IMPLEMENTATION .
             iv_bukrs = p_bukrs
             iv_afabe = _where
             iv_logid = mv_logid.
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t06 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t06 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
 *--------------------------------------------------------------------*
 *-&Step-7: Delete From ANLB ->
 *--------------------------------------------------------------------*
@@ -595,8 +612,9 @@ CLASS application IMPLEMENTATION .
             iv_bukrs = p_bukrs
             iv_afabe = _where
             iv_logid = mv_logid.
-
-        cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t07 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        IF p_cb1 EQ abap_false.
+          cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t07 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| )->write_text( |{ mv_logid ALPHA = OUT }| )->display( ).
+        ENDIF.
 
     ENDCASE.
 

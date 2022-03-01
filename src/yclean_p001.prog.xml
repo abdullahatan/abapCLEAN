@@ -78,6 +78,12 @@
     </item>
     <item>
      <ID>I</ID>
+     <KEY>S04</KEY>
+     <ENTRY>Program Çıktı Kriterleri...</ENTRY>
+     <LENGTH>54</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>T01</KEY>
      <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
      <LENGTH>15</LENGTH>
@@ -136,6 +142,12 @@
      <ENTRY>.</ENTRY>
      <LENGTH>19</LENGTH>
      <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_CB1</KEY>
+     <ENTRY>Günlük çıktısını gösterme</ENTRY>
+     <LENGTH>33</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -318,6 +330,12 @@
       </item>
       <item>
        <ID>I</ID>
+       <KEY>S04</KEY>
+       <ENTRY>Output Criterias</ENTRY>
+       <LENGTH>54</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
        <KEY>T01</KEY>
        <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
        <LENGTH>15</LENGTH>
@@ -362,6 +380,12 @@
        <ID>R</ID>
        <ENTRY>Database Cleaning Program</ENTRY>
        <LENGTH>70</LENGTH>
+      </item>
+      <item>
+       <ID>S</ID>
+       <KEY>P_CB1</KEY>
+       <ENTRY>Don&apos;t show log output!</ENTRY>
+       <LENGTH>38</LENGTH>
       </item>
       <item>
        <ID>S</ID>

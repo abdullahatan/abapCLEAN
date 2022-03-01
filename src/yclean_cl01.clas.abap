@@ -61,6 +61,7 @@ CLASS yclean_cl01 DEFINITION
           VALUE(iv_rldnr)  TYPE fins_ledger
           VALUE(iv_bukrs)  TYPE bukrs
           VALUE(iv_gjahr)  TYPE gjahr
+          VALUE(iv_bstat)  TYPE bstat_d
           VALUE(iv_spmon)  TYPE jahrper
           VALUE(iv_belnr)  TYPE string
         EXPORTING
@@ -258,7 +259,7 @@ CLASS yclean_cl01 IMPLEMENTATION.
                      AND rldnr  = :iv_rldnr
                      AND rbukrs = :iv_bukrs
                      AND gjahr  = :iv_gjahr
-                     AND fiscyearper = :iv_spmon;
+                     AND bstat  = :iv_bstat;
 *-> Apply filter->
     t_result = APPLY_FILTER ( :t_acdoca, :iv_belnr);
 

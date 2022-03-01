@@ -120,6 +120,11 @@
        <TYP>GJAHR</TYP>
       </RSIMP>
       <RSIMP>
+       <PARAMETER>IV_BSTAT</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>BSTAT_D</TYP>
+      </RSIMP>
+      <RSIMP>
        <PARAMETER>IV_BUDAT</PARAMETER>
        <OPTIONAL>X</OPTIONAL>
        <TYP>YCLEAN_TT01</TYP>
@@ -164,6 +169,11 @@
        <PARAMETER>IV_GJAHR</PARAMETER>
        <KIND>P</KIND>
        <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BSTAT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Belge durumu</STEXT>
       </RSFDO>
       <RSFDO>
        <PARAMETER>IV_BUDAT</PARAMETER>
