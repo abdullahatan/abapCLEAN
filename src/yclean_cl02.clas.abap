@@ -91,6 +91,7 @@ CLASS yclean_cl02 DEFINITION
         VALUE(ev_result) TYPE string
       RAISING
         cx_amdp_error .
+
     CLASS-METHODS _period_splitdat
       IMPORTING
         !im_spmon          TYPE spmon
@@ -101,216 +102,11 @@ PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
-CLASS yclean_cl02 IMPLEMENTATION.
-
-  METHOD _rb1_rundat BY DATABASE PROCEDURE
-                     FOR HDB
-                     LANGUAGE SQLSCRIPT
-                     USING vbrk prcd_elements yclean_t01.
-
-*&---------------------------------------------------------------------*
-*&  PRCD_ELMENTS Save Dat->
-*&---------------------------------------------------------------------*
-
-    DECLARE numberofentities NUMBER(10);
-
-    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
-                    FROM vbrk
-                    WHERE mandt = Session_context('CLIENT')
-                      AND fkart = :iv_fkart
-                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat );
-
-*-> Apply filter->
-    t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
-
-    t_prcddat = SELECT DISTINCT prcd.client, prcd.knumv, prcd.kposn, prcd.stunr, prcd.zaehk
-                    FROM prcd_elements AS prcd
-                    WHERE prcd.client = Session_context('CLIENT')
-                      AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
-                      AND prcd.kappl = :iv_kappl
-                      AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-                      AND prcd.kwert = :iv_kwert;
-
-    SELECT COUNT (*) INTO numberofentities FROM :t_prcddat;
-    IF numberofentities <> 0
-    THEN
-        ev_rowcnt = :numberofentities;
-
-        UPSERT yclean_t01 ( client, knumv, kposn, stunr, zaehk ) SELECT * FROM :t_prcddat;
-
-        SELECT COUNT (*) INTO numberofentities FROM yclean_t01 AS db
-            WHERE( db.client, db.knumv, db.kposn, db.stunr, db.zaehk ) IN ( SELECT Session_context( 'CLIENT' ), knumv, kposn, stunr, zaehk FROM :t_prcddat );
-        IF numberofentities = :ev_rowcnt
-        THEN
-            ev_subrc = 0;
-            ev_result = 'Data saved successfully.';
-        ELSE
-            ev_subrc = 4;
-            ev_result = 'Data save failed!';
-        END IF;
-    ELSE
-        ev_subrc = 4;
-        ev_result = 'Your entried value is not valid.';
-    END IF;
-
-  ENDMETHOD.
-  METHOD _rb2_rundat BY DATABASE PROCEDURE
-                     FOR HDB
-                     LANGUAGE SQLSCRIPT
-                     USING vbrk prcd_elements.
-*&---------------------------------------------------------------------*
-*&  PRCD_ELMENTS Delete Dat->
-*&---------------------------------------------------------------------*
-
-    DECLARE numberofentities INTEGER :=0;
-    DECLARE _knumv VARCHAR(10);
-
-    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
-                FROM vbrk
-                WHERE mandt = Session_context('CLIENT')
-                  AND fkart = :iv_fkart
-                  AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
-
-*-> Apply filter->
-    t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
-
-    t_resultdat = SELECT DISTINCT prcd.knumv
-                    FROM prcd_elements AS prcd
-                    WHERE prcd.client = Session_context('CLIENT')
-                      AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
-                      AND prcd.kappl = :iv_kappl
-                      AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-                      AND prcd.kwert = :iv_kwert;
-
-    SELECT COUNT ( * ) INTO numberofentities
-        FROM prcd_elements AS prcd
-        WHERE prcd.client = Session_context('CLIENT')
-          AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
-          AND prcd.kappl = :iv_kappl
-          AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-          AND prcd.kwert = :iv_kwert;
-    IF numberofentities > 0
-    THEN
-        ev_rowcnt = :numberofentities;
-
-        BEGIN
-            DECLARE CURSOR cDelete FOR SELECT knumv FROM :t_resultdat;
-            OPEN cDelete;
-            WHILE 1 <> 2 DO
-                FETCH cDelete INTO _knumv;
-                IF cDelete::NOTFOUND THEN
-                    BREAK;
-               ELSE
-                    DELETE FROM prcd_elements
-                        WHERE client = Session_context('CLIENT')
-                          AND knumv = _knumv
-                          AND kappl = :iv_kappl
-                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-                          AND kwert = :iv_kwert;
-                END IF;
-            END WHILE;
-        END;
-
-        SELECT COUNT ( * ) INTO numberofentities
-            FROM prcd_elements AS prcd
-            WHERE prcd.client = Session_context('CLIENT')
-              AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
-              AND prcd.kappl = :iv_kappl
-              AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-              AND prcd.kwert = :iv_kwert;
-        IF :numberofentities = 0
-        THEN
-            ev_subrc = 0;
-            ev_result = 'Entity has been deleted successfully.';
-         ELSE
-            ev_subrc = 4;
-            ev_result = 'Entity has not been deleted.';
-         END IF;
-    ELSE
-        ev_subrc = 4;
-        ev_result = 'Your entried value is not valid.';
-    END IF;
-
-  ENDMETHOD.
-  METHOD _rb3_rundat BY DATABASE PROCEDURE
-                     FOR HDB
-                     LANGUAGE SQLSCRIPT
-                     USING vbrk yclean_t01 prcd_elements zprcd_elements.
-
-*&---------------------------------------------------------------------*
-*&  PRCD_ELMENTS Restored Dat->
-*&---------------------------------------------------------------------*
-
-    DECLARE numberofentities INTEGER :=0;
-    DECLARE _knumv VARCHAR(10);
-
-    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
-                    FROM vbrk
-                    WHERE mandt = Session_context('CLIENT')
-                      AND fkart = :iv_fkart
-                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
-
-*-> Apply filter->
-    t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
-
-    t_resultdat = SELECT DISTINCT knumv
-                    FROM yclean_t01
-                    WHERE( knumv ) IN( SELECT DISTINCT knumv FROM :t_vbrkdat ) WITH HINT(NO_INLINE);
-
-    SELECT DISTINCT COUNT ( * ) INTO numberofentities
-        FROM zprcd_elements AS prcd
-        WHERE client = Session_context('CLIENT')
-          AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
-          AND kappl = :iv_kappl
-          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-          AND kwert = :iv_kwert;
-
-    IF numberofentities > 0
-    THEN
-
-        ev_rowcnt = :numberofentities;
-
-        BEGIN
-            DECLARE CURSOR cRestore FOR SELECT knumv FROM :t_resultdat;
-            OPEN cRestore;
-            WHILE 1 <> 2 DO
-                FETCH cRestore INTO _knumv;
-                IF cRestore::NOTFOUND THEN
-                    BREAK;
-                ELSE
-                    UPSERT prcd_elements SELECT * FROM zprcd_elements
-                        WHERE client = Session_context('CLIENT')
-                          AND knumv = _knumv
-                          AND kappl = :iv_kappl
-                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-                          AND kwert = :iv_kwert;
-                END IF;
-            END WHILE;
-        END;
-
-        SELECT DISTINCT COUNT ( * ) INTO numberofentities
-            FROM prcd_elements AS prcd
-            WHERE client = Session_context('CLIENT')
-              AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
-              AND kappl = :iv_kappl
-              AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
-              AND kwert = :iv_kwert;
-        IF numberofentities = :ev_rowcnt
-        THEN
-            ev_subrc = 0;
-            ev_result = 'Data restored successfully.';
-        ELSE
-            ev_subrc = 4;
-            ev_result = 'Data restored fail!';
-        END IF;
-    ELSE
-        ev_subrc = 4;
-        ev_result = 'Your entried value is not valid.';
-    END IF;
 
 
+CLASS YCLEAN_CL02 IMPLEMENTATION.
 
-  ENDMETHOD.
+
   METHOD _delete_before BY DATABASE PROCEDURE
                         FOR HDB
                         LANGUAGE SQLSCRIPT
@@ -332,14 +128,14 @@ CLASS yclean_cl02 IMPLEMENTATION.
 *-> Apply filter->
     t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
 
-    SELECT COUNT( * ) INTO _prdc_rowcount
+    SELECT COUNT(*) INTO _prdc_rowcount
         FROM prcd_elements AS prcd
         WHERE prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
           AND prcd.kappl = :iv_kappl
           AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
           AND prcd.kwert = :iv_kwert;
 
-    SELECT COUNT( * ) INTO _save_rowcount
+    SELECT COUNT(*) INTO _save_rowcount
         FROM yclean_t01 as prcd
             WHERE prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result );
 
@@ -353,6 +149,8 @@ CLASS yclean_cl02 IMPLEMENTATION.
     END IF;
 
   ENDMETHOD.
+
+
   METHOD _period_splitdat.
 
     TYPES: BEGIN OF ty_keydat,
@@ -416,4 +214,209 @@ CLASS yclean_cl02 IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD _rb1_rundat BY DATABASE PROCEDURE
+                     FOR HDB
+                     LANGUAGE SQLSCRIPT
+                     USING vbrk prcd_elements yclean_t01.
+
+*&---------------------------------------------------------------------*
+*&  PRCD_ELMENTS Save Dat->
+*&---------------------------------------------------------------------*
+
+    DECLARE numberofentities NUMBER(10);
+
+    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
+                    FROM vbrk
+                    WHERE mandt = Session_context('CLIENT')
+                      AND fkart = :iv_fkart
+                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat );
+
+*-> Apply filter->
+    t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
+
+    t_prcddat = SELECT DISTINCT prcd.client, prcd.knumv, prcd.kposn, prcd.stunr, prcd.zaehk
+                    FROM prcd_elements AS prcd
+                    WHERE prcd.client = Session_context('CLIENT')
+                      AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_vbrk_result )
+                      AND prcd.kappl = :iv_kappl
+                      AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+                      AND prcd.kwert = :iv_kwert;
+
+    SELECT COUNT (*) INTO numberofentities FROM :t_prcddat;
+    IF numberofentities <> 0
+    THEN
+        ev_rowcnt = :numberofentities;
+
+        UPSERT yclean_t01 ( client, knumv, kposn, stunr, zaehk ) SELECT * FROM :t_prcddat;
+
+        SELECT COUNT (*) INTO numberofentities FROM yclean_t01 AS db
+            WHERE( db.client, db.knumv, db.kposn, db.stunr, db.zaehk ) IN ( SELECT Session_context( 'CLIENT' ), knumv, kposn, stunr, zaehk FROM :t_prcddat );
+        IF numberofentities = :ev_rowcnt
+        THEN
+            ev_subrc = 0;
+            ev_result = 'Data saved successfully.';
+        ELSE
+            ev_subrc = 4;
+            ev_result = 'Data save failed!';
+        END IF;
+    ELSE
+        ev_subrc = 4;
+        ev_result = 'Your entried value is not valid.';
+    END IF;
+
+  ENDMETHOD.
+
+
+  METHOD _rb2_rundat BY DATABASE PROCEDURE
+                     FOR HDB
+                     LANGUAGE SQLSCRIPT
+                     USING vbrk prcd_elements.
+*&---------------------------------------------------------------------*
+*&  PRCD_ELMENTS Delete Dat->
+*&---------------------------------------------------------------------*
+
+    DECLARE numberofentities INTEGER :=0;
+    DECLARE _knumv VARCHAR(10);
+
+    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
+                FROM vbrk
+                WHERE mandt = Session_context('CLIENT')
+                  AND fkart = :iv_fkart
+                  AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
+
+*-> Apply filter->
+    t_resultdat = APPLY_FILTER ( :t_vbrkdat, :iv_where );
+
+    SELECT COUNT (*) INTO numberofentities
+        FROM prcd_elements AS prcd
+        WHERE prcd.client = Session_context('CLIENT')
+          AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+          AND prcd.kappl = :iv_kappl
+          AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND prcd.kwert = :iv_kwert;
+    IF numberofentities > 0
+    THEN
+        ev_rowcnt = :numberofentities;
+
+        BEGIN
+            DECLARE CURSOR cDelete FOR SELECT DISTINCT knumv FROM :t_resultdat;
+            OPEN cDelete;
+            WHILE 1 <> 2 DO
+                FETCH cDelete INTO _knumv;
+                IF cDelete::NOTFOUND THEN
+                    BREAK;
+               ELSE
+                    DELETE FROM prcd_elements
+                        WHERE client = Session_context('CLIENT')
+                          AND knumv = _knumv
+                          AND kappl = :iv_kappl
+                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+                          AND kwert = :iv_kwert;
+                END IF;
+            END WHILE;
+        END;
+
+        SELECT COUNT (*) INTO numberofentities
+            FROM prcd_elements AS prcd
+            WHERE prcd.client = Session_context('CLIENT')
+              AND prcd.knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+              AND prcd.kappl = :iv_kappl
+              AND prcd.kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+              AND prcd.kwert = :iv_kwert;
+        IF :numberofentities = 0
+        THEN
+            ev_subrc = 0;
+            ev_result = 'Entity has been deleted successfully.';
+         ELSE
+            ev_subrc = 4;
+            ev_result = 'Entity has not been deleted.';
+         END IF;
+    ELSE
+        ev_subrc = 4;
+        ev_result = 'Your entried value is not valid.';
+    END IF;
+
+  ENDMETHOD.
+
+
+  METHOD _rb3_rundat BY DATABASE PROCEDURE
+                     FOR HDB
+                     LANGUAGE SQLSCRIPT
+                     USING vbrk yclean_t01 prcd_elements zprcd_elements.
+
+*&---------------------------------------------------------------------*
+*&  PRCD_ELMENTS Restored Dat->
+*&---------------------------------------------------------------------*
+
+    DECLARE numberofentities INTEGER :=0;
+    DECLARE _knumv VARCHAR(10);
+
+    t_vbrkdat = SELECT DISTINCT knumv, fkdat, bzirk
+                    FROM vbrk
+                    WHERE mandt = Session_context('CLIENT')
+                      AND fkart = :iv_fkart
+                      AND fkdat IN( SELECT DISTINCT fkdat FROM :it_fkdat ) WITH HINT(NO_INLINE);
+
+*-> Apply filter->
+    t_vbrk_result = APPLY_FILTER ( :t_vbrkdat, :iv_where );
+
+    t_resultdat = SELECT DISTINCT knumv
+                    FROM yclean_t01
+                    WHERE( knumv ) IN( SELECT DISTINCT knumv FROM :t_vbrkdat ) WITH HINT(NO_INLINE);
+
+    SELECT DISTINCT COUNT (*) INTO numberofentities
+        FROM zprcd_elements AS prcd
+        WHERE client = Session_context('CLIENT')
+          AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+          AND kappl = :iv_kappl
+          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+          AND kwert = :iv_kwert;
+
+    IF numberofentities > 0
+    THEN
+
+        ev_rowcnt = :numberofentities;
+
+        BEGIN
+            DECLARE CURSOR cRestore FOR SELECT knumv FROM :t_resultdat;
+            OPEN cRestore;
+            WHILE 1 <> 2 DO
+                FETCH cRestore INTO _knumv;
+                IF cRestore::NOTFOUND THEN
+                    BREAK;
+                ELSE
+                    UPSERT prcd_elements SELECT * FROM zprcd_elements
+                        WHERE client = Session_context('CLIENT')
+                          AND knumv = _knumv
+                          AND kappl = :iv_kappl
+                          AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+                          AND kwert = :iv_kwert;
+                END IF;
+            END WHILE;
+        END;
+
+        SELECT DISTINCT COUNT (*) INTO numberofentities
+            FROM prcd_elements AS prcd
+            WHERE client = Session_context('CLIENT')
+              AND knumv IN( SELECT DISTINCT knumv FROM :t_resultdat )
+              AND kappl = :iv_kappl
+              AND kschl IN( SELECT DISTINCT kschl FROM :it_kschl )
+              AND kwert = :iv_kwert;
+        IF numberofentities = :ev_rowcnt
+        THEN
+            ev_subrc = 0;
+            ev_result = 'Data restored successfully.';
+        ELSE
+            ev_subrc = 4;
+            ev_result = 'Data restored fail!';
+        END IF;
+    ELSE
+        ev_subrc = 4;
+        ev_result = 'Your entried value is not valid.';
+    END IF;
+
+
+
+  ENDMETHOD.
 ENDCLASS.

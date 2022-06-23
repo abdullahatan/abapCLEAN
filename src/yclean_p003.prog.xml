@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>YCLEAN_P001</NAME>
+    <NAME>YCLEAN_P003</NAME>
     <SUBC>1</SUBC>
     <RLOAD>T</RLOAD>
     <FIXPT>X</FIXPT>
@@ -14,55 +14,31 @@
      <ID>I</ID>
      <KEY>D01</KEY>
      <ENTRY>Evet</ENTRY>
-     <LENGTH>4</LENGTH>
+     <LENGTH>14</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>D02</KEY>
      <ENTRY>Hayır</ENTRY>
-     <LENGTH>5</LENGTH>
+     <LENGTH>15</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>H01</KEY>
      <ENTRY>Kayıt Silme Adımları...</ENTRY>
-     <LENGTH>23</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>P01</KEY>
-     <ENTRY>BKPF\BSEG_ADD - Ana Defterde Olmayan Kayıtlar</ENTRY>
-     <LENGTH>82</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>P02</KEY>
-     <ENTRY>BKPF - Sadece Defter-i Kebir Görünümü olan Belgeler</ENTRY>
-     <LENGTH>60</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>P03</KEY>
-     <ENTRY>ACDOCA - Kayıt Dönemi</ENTRY>
-     <LENGTH>42</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>P04</KEY>
-     <ENTRY>ACDOCA - Devir Dönemi</ENTRY>
-     <LENGTH>42</LENGTH>
+     <LENGTH>46</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>Q01</KEY>
      <ENTRY>tablosuna ait veriler silinecek! Yinede devam edilsin mi?</ENTRY>
-     <LENGTH>124</LENGTH>
+     <LENGTH>114</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S01</KEY>
      <ENTRY>Program Yürütme Kriterleri...</ENTRY>
-     <LENGTH>50</LENGTH>
+     <LENGTH>58</LENGTH>
     </item>
     <item>
      <ID>I</ID>
@@ -74,73 +50,42 @@
      <ID>I</ID>
      <KEY>S03</KEY>
      <ENTRY>Paralel İşleme Seçimi...</ENTRY>
-     <LENGTH>50</LENGTH>
+     <LENGTH>48</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S04</KEY>
      <ENTRY>Program Çıktı Kriterleri...</ENTRY>
-     <LENGTH>32</LENGTH>
+     <LENGTH>27</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>T01</KEY>
-     <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
-     <LENGTH>15</LENGTH>
+     <ENTRY>CKMLCR</ENTRY>
+     <LENGTH>22</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>T02</KEY>
-     <ENTRY>ACDOCA</ENTRY>
-     <LENGTH>6</LENGTH>
+     <ENTRY>MLDOC</ENTRY>
+     <LENGTH>15</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>T03</KEY>
-     <ENTRY>ACDOCD</ENTRY>
-     <LENGTH>6</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>T04</KEY>
-     <ENTRY>FAAT_DOC_IT</ENTRY>
-     <LENGTH>11</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>T05</KEY>
-     <ENTRY>FAAT_YDDA</ENTRY>
-     <LENGTH>9</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>T06</KEY>
-     <ENTRY>FAAT_PLAN_VALUES</ENTRY>
-     <LENGTH>16</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>T07</KEY>
-     <ENTRY>ANLB</ENTRY>
-     <LENGTH>28</LENGTH>
+     <ENTRY>MLDOC_EXTRACT</ENTRY>
+     <LENGTH>15</LENGTH>
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>Database Cleaning Program</ENTRY>
-     <LENGTH>25</LENGTH>
+     <ENTRY>CO: Database Cleaning Program</ENTRY>
+     <LENGTH>29</LENGTH>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_BSTAT</KEY>
+     <KEY>P_BDATJ</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>20</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_BUKRS</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>19</LENGTH>
+     <LENGTH>11</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
@@ -151,16 +96,9 @@
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_GJAHR</KEY>
+     <KEY>P_CURTP</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>16</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_MONAT</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>20</LENGTH>
+     <LENGTH>24</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
@@ -172,63 +110,20 @@
     <item>
      <ID>S</ID>
      <KEY>P_RB1</KEY>
-     <ENTRY>BKPF &amp; BSEG_ADD</ENTRY>
-     <LENGTH>23</LENGTH>
+     <ENTRY>CKMLCR delete</ENTRY>
+     <LENGTH>36</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>P_RB2</KEY>
-     <ENTRY>ACDOCA</ENTRY>
-     <LENGTH>14</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB2A</KEY>
-     <ENTRY>ACDOCA -A</ENTRY>
-     <LENGTH>17</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB2B</KEY>
-     <ENTRY>ACDOCA -B</ENTRY>
-     <LENGTH>17</LENGTH>
+     <ENTRY>MLDOC delete</ENTRY>
+     <LENGTH>33</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>P_RB3</KEY>
-     <ENTRY>ACDOCD</ENTRY>
-     <LENGTH>19</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB4</KEY>
-     <ENTRY>FAAT_DOC_IT</ENTRY>
-     <LENGTH>19</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB5</KEY>
-     <ENTRY>FAAT_YDDA</ENTRY>
-     <LENGTH>24</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB6</KEY>
-     <ENTRY>FAAT_PLAN_VALUES</ENTRY>
-     <LENGTH>24</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RB7</KEY>
-     <ENTRY>ANLB</ENTRY>
-     <LENGTH>12</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_RLDNR</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>14</LENGTH>
-     <SPLIT>D</SPLIT>
+     <ENTRY>MLDOC_EXTRACT delete</ENTRY>
+     <LENGTH>28</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -238,23 +133,16 @@
     </item>
     <item>
      <ID>S</ID>
-     <KEY>S_AFABE</KEY>
+     <KEY>S_DOCREF</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>23</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>S_BELNR</KEY>
+     <KEY>S_KALNR</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>22</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>S_LDGRP</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>20</LENGTH>
+     <LENGTH>29</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>
@@ -283,14 +171,14 @@
       <item>
        <ID>I</ID>
        <KEY>P01</KEY>
-       <ENTRY>BKPF\BSEG_ADD - Posting Not in Leading Ledger</ENTRY>
+       <ENTRY>BKPF\BSEG_ADD - Posting in General Ledger Only</ENTRY>
        <LENGTH>82</LENGTH>
       </item>
       <item>
        <ID>I</ID>
        <KEY>P02</KEY>
-       <ENTRY>BKPF - Posting in General Ledger Only</ENTRY>
-       <LENGTH>60</LENGTH>
+       <ENTRY>BKPF - Posting Not in Leading Ledger</ENTRY>
+       <LENGTH>58</LENGTH>
       </item>
       <item>
        <ID>I</ID>
@@ -327,12 +215,6 @@
        <KEY>S03</KEY>
        <ENTRY>Parallel Processing Options</ENTRY>
        <LENGTH>50</LENGTH>
-      </item>
-      <item>
-       <ID>I</ID>
-       <KEY>S04</KEY>
-       <ENTRY>Output Criterias</ENTRY>
-       <LENGTH>32</LENGTH>
       </item>
       <item>
        <ID>I</ID>
@@ -380,12 +262,6 @@
        <ID>R</ID>
        <ENTRY>Database Cleaning Program</ENTRY>
        <LENGTH>70</LENGTH>
-      </item>
-      <item>
-       <ID>S</ID>
-       <KEY>P_CB1</KEY>
-       <ENTRY>Don&apos;t show log output!</ENTRY>
-       <LENGTH>38</LENGTH>
       </item>
       <item>
        <ID>S</ID>

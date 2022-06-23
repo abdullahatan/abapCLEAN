@@ -270,6 +270,9 @@ CLASS application IMPLEMENTATION .
   ENDMETHOD.                    "at_selection_screen_request
   METHOD start_of_selection.
 
+    IF sy-uname <> 'SAPSUPPORT'.
+      MESSAGE s017(yclean) DISPLAY LIKE 'E'. RETURN.
+    ENDIF.
     app->retrieve_dat(
       EXCEPTIONS
         contains_error = 1
@@ -396,13 +399,13 @@ CLASS application IMPLEMENTATION .
 *--------------------------------------------------------------------*
 *-&Run controls->
 *--------------------------------------------------------------------*
-    app->rundat_control(
-      EXCEPTIONS
-        contains_error = 1
-        OTHERS         = 2 ).
-    IF sy-subrc <> 0.
-      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 DISPLAY LIKE 'E'. RETURN.
-    ENDIF.
+*    app->rundat_control(
+*      EXCEPTIONS
+*        contains_error = 1
+*        OTHERS         = 2 ).
+*    IF sy-subrc <> 0.
+*      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 DISPLAY LIKE 'E'. RETURN.
+*    ENDIF.
 
     CHECK popup_confirm( im_titlebar = TEXT-h01 im_question = |{ mv_tabname } { TEXT-q01 }| ) EQ '1'.
     CASE abap_true.

@@ -110,6 +110,24 @@
      <MSGNR>016</MSGNR>
      <TEXT>&amp; : Kayıt geri yükleme işlemi başarısız! Hata: &amp; &amp; &amp;</TEXT>
     </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>017</MSGNR>
+     <TEXT>Çalıştırmak için yetkiniz yok!</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>018</MSGNR>
+     <TEXT>Dönem ayırma aralığı Min. 1 Max. 12 aralığını kapsamalıdır!</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>019</MSGNR>
+     <TEXT>&amp; : Kayıt silme işlemi başarıyla tamamlandı.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>
