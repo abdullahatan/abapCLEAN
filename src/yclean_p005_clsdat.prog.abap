@@ -34,8 +34,8 @@ SELECTION-SCREEN BEGIN OF BLOCK b3.
   SELECTION-SCREEN SKIP 1.
   SELECTION-SCREEN COMMENT /1(40) blok_3.
   PARAMETERS:
-    p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 12 OBLIGATORY MODIF ID m06,
-    p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID m06.
+    p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 12 OBLIGATORY MODIF ID m07,
+    p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID m08.
 SELECTION-SCREEN END OF BLOCK b3.
 
 SELECTION-SCREEN BEGIN OF BLOCK b4.
@@ -183,14 +183,20 @@ CLASS application IMPLEMENTATION .
       CLEAR: app_session->mv_tabname.
       CASE abap_true.
         WHEN p_rb1.
+          FREE: s_belnr, s_objnr.
           app_session->mv_tabname = TEXT-t01.
         WHEN p_rb2.
+          FREE: s_belnr, s_objnr.
           app_session->mv_tabname = TEXT-t02.
         WHEN p_rb3.
+          FREE: s_belnr, s_objnr.
           app_session->mv_tabname = TEXT-t03.
           IF screen-group1 EQ 'M03'.
             screen-active = 0.
           ENDIF.
+        WHEN p_rb4.
+          FREE: s_belnr, s_objnr.
+          app_session->mv_tabname = TEXT-t03.
       ENDCASE.
       MODIFY SCREEN.
     ENDLOOP.
@@ -393,6 +399,7 @@ CLASS application IMPLEMENTATION .
 
     DATA: _where  TYPE string,
           t_belnr TYPE yclean_tt08,
+          t_objnr TYPE yclean_tt09,
           _result TYPE string.
 
     CHECK popup_confirm( im_titlebar = TEXT-h01 im_question = |{ mv_tabname } { TEXT-q01 }| ) EQ '1'.
@@ -493,9 +500,9 @@ CLASS application IMPLEMENTATION .
 *-&Step-3: Update From ACDOCA ->
 *--------------------------------------------------------------------*
       WHEN p_rb3.
-        FREE: t_belnr.
-        LOOP AT s_belnr REFERENCE INTO _belnr.
-          APPEND VALUE #( belnr = _belnr->low ) TO t_belnr.
+        FREE: t_objnr.
+        LOOP AT s_objnr REFERENCE INTO DATA(_objnr).
+          APPEND VALUE #( objnr = _objnr->low ) TO t_objnr.
         ENDLOOP.
 
         _output = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
@@ -515,17 +522,16 @@ CLASS application IMPLEMENTATION .
 
         LOOP AT t_splitdat REFERENCE INTO _splitdat.
           CLEAR: mv_logid, mv_taskname.
-          mv_taskname = |COBK_{ p_kokrs }_{ p_gjahr }/T{ _splitdat->line }|.
+          mv_taskname = |COSP_COKA_{ p_bukrs }_{ p_gjahr }/T{ _splitdat->line }|.
           mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
 
-          CALL FUNCTION 'YCLEAN_FM13' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
+          CALL FUNCTION 'YCLEAN_FM14' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
             EXPORTING
               iv_rldnr       = im_rldnr
               iv_bukrs       = im_bukrs
-              iv_kokrs       = im_kokrs
               iv_gjahr       = im_gjahr
               iv_poper       = t_splitdat
-              iv_belnr       = t_belnr
+              iv_objnr       = t_objnr
               iv_logid       = mv_logid
             EXCEPTIONS
               contains_error = 1

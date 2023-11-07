@@ -73,8 +73,14 @@
     <item>
      <ID>I</ID>
      <KEY>T03</KEY>
-     <ENTRY>ACDOCA</ENTRY>
+     <ENTRY>COSP &amp; COKA</ENTRY>
      <LENGTH>23</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>T04</KEY>
+     <ENTRY>ACDOCA</ENTRY>
+     <LENGTH>16</LENGTH>
     </item>
     <item>
      <ID>R</ID>
@@ -162,7 +168,7 @@
      <ID>S</ID>
      <KEY>S_OBJNR</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>9</LENGTH>
+     <LENGTH>22</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>
