@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>YCLEAN_P003</NAME>
+    <NAME>YCLEAN_P005</NAME>
     <SUBC>1</SUBC>
     <RLOAD>T</RLOAD>
     <FIXPT>X</FIXPT>
@@ -25,82 +25,87 @@
     <item>
      <ID>I</ID>
      <KEY>H01</KEY>
-     <ENTRY>Kayıt Silme Adımları...</ENTRY>
+     <ENTRY>Info: Deletion Steps...</ENTRY>
      <LENGTH>46</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>Q01</KEY>
-     <ENTRY>tablosuna ait veriler yedeklenecek! Devam edilsin mi?</ENTRY>
+     <ENTRY>table data will be deleted! Should we continue?</ENTRY>
      <LENGTH>114</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>Q02</KEY>
-     <ENTRY>tablosuna ait veriler silinecek! Yinede devam edilsin mi?</ENTRY>
-     <LENGTH>114</LENGTH>
-    </item>
-    <item>
-     <ID>I</ID>
-     <KEY>Q03</KEY>
-     <ENTRY>tablosuna ait yedekleme verileri geri yüklenecek! Devam edilsin mi?</ENTRY>
-     <LENGTH>132</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S01</KEY>
-     <ENTRY>Program Yürütme Kriterleri...</ENTRY>
+     <ENTRY>@12@ Program Execution Criteria ;</ENTRY>
      <LENGTH>58</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S02</KEY>
-     <ENTRY>Genel Seçim Kriterleri...</ENTRY>
+     <ENTRY>@4G@ Data Selection Criteria ;</ENTRY>
      <LENGTH>50</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S03</KEY>
-     <ENTRY>Paralel İşleme Seçimi...</ENTRY>
+     <ENTRY>@US@ Parallel Processing Criteria ;</ENTRY>
      <LENGTH>48</LENGTH>
     </item>
     <item>
      <ID>I</ID>
+     <KEY>S04</KEY>
+     <ENTRY>@0X@ Program Output Criteria ;</ENTRY>
+     <LENGTH>54</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>T01</KEY>
-     <ENTRY>PRCD_ELEMENT</ENTRY>
-     <LENGTH>22</LENGTH>
+     <ENTRY>COEP</ENTRY>
+     <LENGTH>16</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>T02</KEY>
+     <ENTRY>COBK</ENTRY>
+     <LENGTH>15</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>T03</KEY>
+     <ENTRY>ACDOCA</ENTRY>
+     <LENGTH>23</LENGTH>
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>PRCD_ELEMENTS: Database Cleaning Program</ENTRY>
-     <LENGTH>41</LENGTH>
+     <ENTRY>PA-CO: Database Cleaning Program</ENTRY>
+     <LENGTH>32</LENGTH>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_FKART</KEY>
+     <KEY>P_BUKRS</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>23</LENGTH>
+     <LENGTH>19</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_KAPPL</KEY>
+     <KEY>P_CB1</KEY>
+     <ENTRY>Günlük çıktısını gösterme</ENTRY>
+     <LENGTH>33</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_GJAHR</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>16</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_KSCHL</KEY>
+     <KEY>P_KOKRS</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>18</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_KWERT</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>13</LENGTH>
+     <LENGTH>20</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
@@ -112,20 +117,33 @@
     <item>
      <ID>S</ID>
      <KEY>P_RB1</KEY>
-     <ENTRY>PRCD_ELEMENTS: Yedekle</ENTRY>
-     <LENGTH>36</LENGTH>
+     <ENTRY>@11@ COEP delete</ENTRY>
+     <LENGTH>24</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>P_RB2</KEY>
-     <ENTRY>PRCD_ELEMENTS: Sil</ENTRY>
-     <LENGTH>33</LENGTH>
+     <ENTRY>@11@ COBK delete</ENTRY>
+     <LENGTH>24</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>P_RB3</KEY>
-     <ENTRY>PRCD_ELEMENTS: Geri Yükle</ENTRY>
-     <LENGTH>33</LENGTH>
+     <ENTRY>@11@ COSP, COKA delete</ENTRY>
+     <LENGTH>34</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_RB4</KEY>
+     <ENTRY>@TS@ ACDOCA update</ENTRY>
+     <LENGTH>26</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_RLDNR</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>14</LENGTH>
+     <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
@@ -135,22 +153,16 @@
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_SPMON</KEY>
-     <ENTRY>Dönem Yıl</ENTRY>
-     <LENGTH>17</LENGTH>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>S_BZIRK</KEY>
+     <KEY>S_BELNR</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>23</LENGTH>
+     <LENGTH>22</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>S_FKDAT</KEY>
+     <KEY>S_OBJNR</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>25</LENGTH>
+     <LENGTH>9</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>

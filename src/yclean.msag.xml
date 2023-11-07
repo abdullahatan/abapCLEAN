@@ -128,6 +128,12 @@
      <MSGNR>019</MSGNR>
      <TEXT>&amp; : Kayıt silme işlemi başarıyla tamamlandı.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>020</MSGNR>
+     <TEXT>COEP, COBK, COSP ve COKA tabloları temizlenmeden ACDOCA güncellenemez!</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

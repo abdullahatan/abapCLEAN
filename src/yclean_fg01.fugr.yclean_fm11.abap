@@ -1,4 +1,4 @@
-FUNCTION YCLEAN_FM11.
+FUNCTION yclean_fm11.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
@@ -28,6 +28,7 @@ FUNCTION YCLEAN_FM11.
           ev_subrc  = DATA(_subrc)
           ev_result = DATA(_result) ).
       IF _subrc IS INITIAL.
+        COMMIT WORK AND WAIT.
         _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '019' iv_msgv1 = TEXT-t14 ).
       ELSE.
         _logger->add_error( iv_msgid = mc_msg-id iv_msgno = '004' iv_msgv1 = TEXT-t14 iv_msgv2 = _result ).

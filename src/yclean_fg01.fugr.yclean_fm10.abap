@@ -6,8 +6,6 @@ FUNCTION yclean_fm10.
 *"     VALUE(IV_CURTP) TYPE  FINS_CURTYPE
 *"     VALUE(IV_DOCREF) TYPE  YCLEAN_TT07 OPTIONAL
 *"     VALUE(IV_LOGID) TYPE  BALNREXT
-*"  EXCEPTIONS
-*"      CONTAINS_ERROR
 *"----------------------------------------------------------------------
   DATA: _msg TYPE c LENGTH 150.
   DATA(_logger) = yclean_bc_logger_toolkit=>get_instance(
@@ -28,6 +26,7 @@ FUNCTION yclean_fm10.
           ev_subrc  = DATA(_subrc)
           ev_result = DATA(_result) ).
       IF _subrc IS INITIAL.
+        COMMIT WORK AND WAIT.
         _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '019' iv_msgv1 = TEXT-t13 ).
       ELSE.
         _logger->add_error( iv_msgid = mc_msg-id iv_msgno = '004' iv_msgv1 = TEXT-t13 iv_msgv2 = _result ).

@@ -1,11 +1,11 @@
 *&---------------------------------------------------------------------*
-*& Program YCLEAN_P002
+*& Program YCLEAN_P005
 *&---------------------------------------------------------------------*
-*&
+*& @author Abdullah ATAN <abdullah.atan@forcode.com.tr>
 *&---------------------------------------------------------------------*
-PROGRAM yclean_p002.
+PROGRAM yclean_p005.
 
-INCLUDE yclean_p002_clsdat.
+INCLUDE yclean_p005_clsdat.
 
 LOAD-OF-PROGRAM.
   app_session = application=>app_instance( ).

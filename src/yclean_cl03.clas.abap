@@ -87,43 +87,9 @@ ENDCLASS.
 
 
 
-CLASS yclean_cl03 IMPLEMENTATION.
-
-  METHOD _monat_splitdat.
-
-    DATA: _mod     TYPE n LENGTH 2,
-          _poper   TYPE poper,
-          _tabix   TYPE sy-tabix,
-          t_monats TYPE tt_monatdat.
-
-    IF NOT im_split BETWEEN 1 AND 12.
-      MESSAGE e018(yclean) RAISING contains_error.
-    ENDIF.
-
-    _mod = floor( 12 / im_split ).
-
-    DO im_split TIMES.
-      ADD 1 TO _tabix.
-      IF _tabix EQ im_split.
-        DO.
-          ADD 1 TO _poper.
-          APPEND VALUE #( poper = _poper ) TO t_monats.
-          IF _poper EQ 12.
-            EXIT.
-          ENDIF.
-        ENDDO.
-      ELSE.
-        DO _mod TIMES.
-          ADD 1 TO _poper.
-          APPEND VALUE #( poper = _poper ) TO t_monats.
-        ENDDO.
-      ENDIF.
-      APPEND VALUE #( line = _tabix monats = t_monats[] ) TO rt_splitdat.
-      FREE: t_monats.
-    ENDDO.
+CLASS YCLEAN_CL03 IMPLEMENTATION.
 
 
-  ENDMETHOD.
   METHOD _jahrper_splitdat.
 
     DATA: _mod       TYPE n LENGTH 2,
@@ -160,6 +126,44 @@ CLASS yclean_cl03 IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD _monat_splitdat.
+
+    DATA: _mod     TYPE n LENGTH 2,
+          _poper   TYPE poper,
+          _tabix   TYPE sy-tabix,
+          t_monats TYPE tt_monatdat.
+
+    IF NOT im_split BETWEEN 1 AND 12.
+      MESSAGE e018(yclean) RAISING contains_error.
+    ENDIF.
+
+    _mod = floor( 12 / im_split ).
+
+    DO im_split TIMES.
+      ADD 1 TO _tabix.
+      IF _tabix EQ im_split.
+        DO.
+          ADD 1 TO _poper.
+          APPEND VALUE #( poper = _poper ) TO t_monats.
+          IF _poper EQ 12.
+            EXIT.
+          ENDIF.
+        ENDDO.
+      ELSE.
+        DO _mod TIMES.
+          ADD 1 TO _poper.
+          APPEND VALUE #( poper = _poper ) TO t_monats.
+        ENDDO.
+      ENDIF.
+      APPEND VALUE #( line = _tabix monats = t_monats[] ) TO rt_splitdat.
+      FREE: t_monats.
+    ENDDO.
+
+
+  ENDMETHOD.
+
+
   METHOD _rb1_rundat BY DATABASE PROCEDURE
                      FOR HDB
                      LANGUAGE SQLSCRIPT
@@ -191,6 +195,8 @@ CLASS yclean_cl03 IMPLEMENTATION.
 
 
   ENDMETHOD.
+
+
   METHOD _rb2_rundat BY DATABASE PROCEDURE
                      FOR HDB
                      LANGUAGE SQLSCRIPT
@@ -220,6 +226,8 @@ CLASS yclean_cl03 IMPLEMENTATION.
     ev_result = 'Entity has been deleted successfully.';
 
   ENDMETHOD.
+
+
   METHOD _rb3_rundat BY DATABASE PROCEDURE
                      FOR HDB
                      LANGUAGE SQLSCRIPT

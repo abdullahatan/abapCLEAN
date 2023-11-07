@@ -580,7 +580,53 @@
     <item>
      <FUNCNAME>YCLEAN_FM10</FUNCNAME>
      <REMOTE_CALL>R</REMOTE_CALL>
-     <SHORT_TEXT>Clean: CKMLCR Delete</SHORT_TEXT>
+     <SHORT_TEXT>Clean: MLDOC Delete</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_JAHRPER</PARAMETER>
+       <TYP>YCLEAN_TT05</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_CURTP</PARAMETER>
+       <TYP>FINS_CURTYPE</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_DOCREF</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT07</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_JAHRPER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>JAHRPER Table Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_CURTP</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Para birimi türü</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_DOCREF</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>DOCREF Filter Dat.</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM11</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: MLDOC_EXTRACT Delete</SHORT_TEXT>
      <IMPORT>
       <RSIMP>
        <PARAMETER>IV_JAHRPER</PARAMETER>
@@ -633,22 +679,34 @@
      </DOCUMENTATION>
     </item>
     <item>
-     <FUNCNAME>YCLEAN_FM11</FUNCNAME>
+     <FUNCNAME>YCLEAN_FM12</FUNCNAME>
      <REMOTE_CALL>R</REMOTE_CALL>
-     <SHORT_TEXT>Clean: CKMLCR Delete</SHORT_TEXT>
+     <SHORT_TEXT>Clean: COEP Delete</SHORT_TEXT>
      <IMPORT>
       <RSIMP>
-       <PARAMETER>IV_JAHRPER</PARAMETER>
-       <TYP>YCLEAN_TT05</TYP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>RLDNR</TYP>
       </RSIMP>
       <RSIMP>
-       <PARAMETER>IV_CURTP</PARAMETER>
-       <TYP>FINS_CURTYPE</TYP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
       </RSIMP>
       <RSIMP>
-       <PARAMETER>IV_DOCREF</PARAMETER>
+       <PARAMETER>IV_KOKRS</PARAMETER>
+       <TYP>KOKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <TYP>YCLEAN_TT04</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
        <OPTIONAL>X</OPTIONAL>
-       <TYP>YCLEAN_TT07</TYP>
+       <TYP>YCLEAN_TT08</TYP>
       </RSIMP>
       <RSIMP>
        <PARAMETER>IV_LOGID</PARAMETER>
@@ -662,19 +720,189 @@
      </EXCEPTION>
      <DOCUMENTATION>
       <RSFDO>
-       <PARAMETER>IV_JAHRPER</PARAMETER>
+       <PARAMETER>IV_RLDNR</PARAMETER>
        <KIND>P</KIND>
-       <STEXT>JAHRPER Table Type</STEXT>
+       <STEXT>Defter</STEXT>
       </RSFDO>
       <RSFDO>
-       <PARAMETER>IV_CURTP</PARAMETER>
+       <PARAMETER>IV_BUKRS</PARAMETER>
        <KIND>P</KIND>
-       <STEXT>Para birimi türü</STEXT>
+       <STEXT>Şirket kodu</STEXT>
       </RSFDO>
       <RSFDO>
-       <PARAMETER>IV_DOCREF</PARAMETER>
+       <PARAMETER>IV_KOKRS</PARAMETER>
        <KIND>P</KIND>
-       <STEXT>KALNR &amp; DOCREF Filter Dat.</STEXT>
+       <STEXT>Kontrol kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>POPER Table Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>CO_BELNR Filter Data</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>CONTAINS_ERROR</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM13</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: COBK Delete</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>RLDNR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_KOKRS</PARAMETER>
+       <TYP>KOKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <TYP>YCLEAN_TT04</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT08</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>CONTAINS_ERROR</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_KOKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Kontrol kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>POPER Table Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>CO_BELNR Filter Data</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>CONTAINS_ERROR</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM14</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: COPS &amp; COKA Delete</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>RLDNR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <TYP>YCLEAN_TT04</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_OBJNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT09</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>CONTAINS_ERROR</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>POPER Table Type</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_OBJNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>OBJNR Filter Data</STEXT>
       </RSFDO>
       <RSFDO>
        <PARAMETER>IV_LOGID</PARAMETER>

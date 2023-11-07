@@ -1,11 +1,11 @@
 *&---------------------------------------------------------------------*
-*& Program YCLEAN_P002
+*& Program YCLEAN_P004
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-PROGRAM yclean_p002.
+PROGRAM yclean_p004.
 
-INCLUDE yclean_p002_clsdat.
+INCLUDE yclean_p004_clsdat.
 
 LOAD-OF-PROGRAM.
   app_session = application=>app_instance( ).
