@@ -49,14 +49,26 @@
     <item>
      <ID>I</ID>
      <KEY>S03</KEY>
-     <ENTRY>@US@ Parallel Processing Criteria ;</ENTRY>
+     <ENTRY>@1U@ Key Date Criteria ;</ENTRY>
      <LENGTH>48</LENGTH>
     </item>
     <item>
      <ID>I</ID>
      <KEY>S04</KEY>
+     <ENTRY>@US@ Parallel Processing Criteria ;</ENTRY>
+     <LENGTH>60</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>S05</KEY>
      <ENTRY>@0X@ Program Output Criteria ;</ENTRY>
-     <LENGTH>54</LENGTH>
+     <LENGTH>60</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>S06</KEY>
+     <ENTRY>@K7@ Expert Mode Criteria ;</ENTRY>
+     <LENGTH>27</LENGTH>
     </item>
     <item>
      <ID>I</ID>
@@ -84,8 +96,8 @@
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>PA-CO: Database Cleaning Program</ENTRY>
-     <LENGTH>32</LENGTH>
+     <ENTRY>COPA: Database Cleaning Program</ENTRY>
+     <LENGTH>31</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -102,6 +114,12 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>P_CB2</KEY>
+     <ENTRY>Çalıştırma kontrolleri hariç</ENTRY>
+     <LENGTH>36</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>P_GJAHR</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>16</LENGTH>
@@ -110,6 +128,13 @@
     <item>
      <ID>S</ID>
      <KEY>P_KOKRS</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>20</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_POPER</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>20</LENGTH>
      <SPLIT>D</SPLIT>

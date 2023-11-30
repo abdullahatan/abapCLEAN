@@ -152,6 +152,12 @@
      <ENTRY>COSP &amp; COKA</ENTRY>
      <LENGTH>21</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>T18</KEY>
+     <ENTRY>ACDOCA</ENTRY>
+     <LENGTH>10</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>

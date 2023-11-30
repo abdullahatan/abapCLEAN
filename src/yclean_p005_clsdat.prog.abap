@@ -21,31 +21,43 @@ SELECTION-SCREEN BEGIN OF BLOCK b2.
   PARAMETERS:
     p_rldnr TYPE acdoca-rldnr OBLIGATORY DEFAULT '0L' MODIF ID m01,
     p_bukrs TYPE acdoca-rbukrs OBLIGATORY DEFAULT '1001' MODIF ID m02,
-    p_kokrs TYPE cobk-kokrs OBLIGATORY DEFAULT '1001' MODIF ID m03,
-    p_gjahr TYPE acdoca-gjahr OBLIGATORY DEFAULT sy-datum MODIF ID m04.
+    p_kokrs TYPE cobk-kokrs OBLIGATORY DEFAULT '1001' MODIF ID m03.
 
   SELECT-OPTIONS:
-    s_belnr FOR acdoca-co_belnr NO INTERVALS MODIF ID m05 MATCHCODE OBJECT cfindoc_all,
-    s_objnr FOR acdoca-objnr NO INTERVALS MODIF ID m06.
+    s_belnr FOR acdoca-co_belnr NO INTERVALS MODIF ID m06 MATCHCODE OBJECT cfindoc_all,
+    s_objnr FOR acdoca-objnr NO INTERVALS MODIF ID m07.
 
+  SELECTION-SCREEN SKIP 1.
+  SELECTION-SCREEN COMMENT /1(40) blok_3.
+  PARAMETERS:
+    p_gjahr TYPE acdoca-gjahr DEFAULT sy-datum MODIF ID m04,
+    p_poper TYPE acdoca-poper DEFAULT sy-datum+4(2) MODIF ID m05.
 SELECTION-SCREEN END OF BLOCK b2.
 
 SELECTION-SCREEN BEGIN OF BLOCK b3.
   SELECTION-SCREEN SKIP 1.
-  SELECTION-SCREEN COMMENT /1(40) blok_3.
+  SELECTION-SCREEN COMMENT /1(40) blok_4.
   PARAMETERS:
-    p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 12 OBLIGATORY MODIF ID m07,
-    p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID m08.
+    p_prll TYPE int1 AS LISTBOX VISIBLE LENGTH 6 DEFAULT 1 OBLIGATORY MODIF ID m08,
+    p_rz12 TYPE rzlli_apcl DEFAULT '' MODIF ID m09.
 SELECTION-SCREEN END OF BLOCK b3.
 
 SELECTION-SCREEN BEGIN OF BLOCK b4.
   SELECTION-SCREEN SKIP 1.
-  SELECTION-SCREEN COMMENT /1(40) blok_4.
+  SELECTION-SCREEN COMMENT /1(40) blok_5.
   PARAMETERS: p_cb1 AS CHECKBOX DEFAULT ''.
 SELECTION-SCREEN END OF BLOCK b4.
 
+SELECTION-SCREEN BEGIN OF BLOCK b5.
+  SELECTION-SCREEN SKIP 1.
+  SELECTION-SCREEN COMMENT /1(40) blok_6 MODIF ID exp.
+  PARAMETERS: p_cb2 AS CHECKBOX DEFAULT '' MODIF ID exp.
+SELECTION-SCREEN END OF BLOCK b5.
+
 CLASS application DEFINITION DEFERRED.
-DATA: app_session TYPE REF TO application.
+DATA: app_session TYPE REF TO application,
+      mv_memid    TYPE char2,
+      mv_expmode  TYPE xfeld.
 
 *----------------------------------------------------------------------*
 *       CLASS application DEFINITION
@@ -57,7 +69,8 @@ CLASS application DEFINITION .
   PUBLIC SECTION.
 
     TYPES:
-      mtt_belnr_rng TYPE RANGE OF co_belnr.
+      mtt_belnr_rng TYPE RANGE OF co_belnr,
+      mtt_objnr_rng TYPE RANGE OF j_objnr.
 
     CLASS-DATA:
       app TYPE REF TO application.
@@ -87,7 +100,11 @@ CLASS application DEFINITION .
 
     METHODS:
       select_option_restrict,
-      listbox_build,
+      listbox_build
+        IMPORTING
+          im_kind TYPE char10
+        EXCEPTIONS
+          handle_error,
       f4_finanscal_perio
         CHANGING
           cv_spmon TYPE s031-spmon,
@@ -103,9 +120,11 @@ CLASS application DEFINITION .
           !im_bukrs TYPE bukrs
           !im_kokrs TYPE kokrs
           !im_gjahr TYPE gjahr
+          !im_poper TYPE poper
           !im_prll  TYPE int1
           !im_rz12  TYPE rzlli_apcl OPTIONAL
           !im_belnr TYPE mtt_belnr_rng OPTIONAL
+          !im_objnr TYPE mtt_objnr_rng OPTIONAL
           !im_xshow TYPE xfeld OPTIONAL
         EXCEPTIONS
           contains_error,
@@ -139,65 +158,140 @@ CLASS application IMPLEMENTATION .
     blok_2 = TEXT-s02.
     blok_3 = TEXT-s03.
     blok_4 = TEXT-s04.
+    blok_5 = TEXT-s05.
+    blok_6 = TEXT-s06.
+    SET PARAMETER ID 'GR1' FIELD 'R1'.
     app->select_option_restrict( ).
-    app->listbox_build( ).
+    app->listbox_build(
+      EXPORTING
+        im_kind      = 'DAYS'
+      EXCEPTIONS
+        handle_error = 1
+        OTHERS       = 2 ).
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+        WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+    p_cb2 = abap_false.
+    mv_expmode = space.
   ENDMETHOD.                    "initialization
   METHOD at_selection_screen.
-
     CASE sy-ucomm.
       WHEN 'ONLI'.
-      WHEN 'CMD1'.
-        IF p_rb4 EQ abap_true.
-          app->rundat_control(
-            EXCEPTIONS
-              acdoca_not_deleted = 1
-              OTHERS             = 2 ).
-          CASE sy-subrc.
-            WHEN 1.
-              p_rb4 = abap_false.
-              p_rb1 = abap_true.
-              MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 DISPLAY LIKE 'E'.
-            WHEN OTHERS.
-          ENDCASE.
+        CLEAR: app_session->mv_tabname.
+        CASE abap_true.
+          WHEN p_rb1.
+            FREE: app_session->mv_tabname.
+            app_session->mv_tabname = TEXT-t01.
+          WHEN p_rb2.
+            FREE: app_session->mv_tabname.
+            app_session->mv_tabname = TEXT-t02.
+          WHEN p_rb3.
+            FREE: app_session->mv_tabname.
+            app_session->mv_tabname = TEXT-t03.
+          WHEN p_rb4.
+            FREE: app_session->mv_tabname.
+            app_session->mv_tabname = TEXT-t04.
+        ENDCASE.
+
+        IF p_gjahr IS INITIAL OR p_poper IS INITIAL.
+          MESSAGE e025(yclean).
         ENDIF.
+
+        app->rundat_control(
+          EXCEPTIONS
+            acdoca_not_deleted = 1
+            OTHERS             = 2 ).
+        IF sy-subrc <> 0.
+          MESSAGE ID sy-msgid TYPE 'E' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+
+      WHEN 'CMD1'.
+        IF p_gjahr IS INITIAL OR p_poper IS INITIAL.
+          MESSAGE s025(yclean) DISPLAY LIKE 'E'. RETURN.
+        ELSE.
+          FREE: mv_memid.
+          mv_memid = COND #( WHEN p_rb1 EQ abap_true THEN 'R1'
+                             WHEN p_rb2 EQ abap_true THEN 'R2'
+                             WHEN p_rb3 EQ abap_true THEN 'R3'
+                             WHEN p_rb4 EQ abap_true THEN 'R4' ELSE 'R1').
+          SET PARAMETER ID 'GR1' FIELD mv_memid.
+        ENDIF.
+        app->listbox_build(
+          EXPORTING
+            im_kind      = COND #( WHEN p_rb4 EQ abap_true THEN 'MONTHS' ELSE 'DAYS' )
+          EXCEPTIONS
+            handle_error = 1
+          OTHERS       = 2  ).
+        IF sy-subrc <> 0.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+
+        CASE abap_true.
+          WHEN p_rb1.
+            FREE: s_belnr, s_objnr.
+          WHEN p_rb2.
+            FREE: s_belnr, s_objnr.
+          WHEN p_rb3.
+            FREE: s_belnr, s_objnr.
+          WHEN p_rb4.
+            FREE: s_belnr, s_objnr.
+            app->rundat_control(
+              EXCEPTIONS
+                acdoca_not_deleted = 1
+                OTHERS             = 2 ).
+            IF sy-subrc <> 0.
+              MESSAGE ID sy-msgid TYPE 'I' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+            ENDIF.
+        ENDCASE.
+      WHEN 'EXPERT'.
+        mv_expmode = abap_true.
       WHEN OTHERS.
     ENDCASE.
 
   ENDMETHOD.                    "at_selection_screen
   METHOD at_selection_screen_output.
-*
+
+    FREE: mv_memid.
+    GET PARAMETER ID 'GR1' FIELD mv_memid.
+    IF mv_memid = 'R1'.
+      p_rb1 = abap_true. p_rb2 = abap_false. p_rb3 = abap_false. p_rb4 = abap_false.
+    ELSEIF mv_memid = 'R2'.
+      p_rb1 = abap_false. p_rb2 = abap_true. p_rb3 = abap_false. p_rb4 = abap_false.
+    ELSEIF mv_memid = 'R3'.
+      p_rb1 = abap_false. p_rb2 = abap_false. p_rb3 = abap_true. p_rb4 = abap_false.
+    ELSEIF mv_memid = 'R4'.
+      p_rb1 = abap_false. p_rb2 = abap_false. p_rb3 = abap_false. p_rb4 = abap_true.
+    ELSE.
+      p_rb1 = abap_true. p_rb2 = abap_false. p_rb3 = abap_false. p_rb4 = abap_false.
+    ENDIF.
+
     LOOP AT SCREEN.
+      IF screen-group1 EQ 'EXP'.
+        screen-active = COND #( WHEN mv_expmode EQ abap_true THEN 1 ELSE 0 ).
+      ENDIF.
       IF screen-name CS 'BLOK'.
         screen-intensified = 1.
       ENDIF.
       IF screen-group1 EQ 'M01' OR screen-group1 EQ 'M02' OR screen-group1 EQ 'M03'.
         screen-input = 0.
       ENDIF.
+      IF screen-group1 EQ 'M03'.
+        screen-active = COND #( WHEN p_rb3 EQ abap_true OR p_rb4 EQ abap_true THEN 0 ELSE 1 ).
+      ENDIF.
+      IF screen-group1 EQ 'M04'.
+        screen-required = 2.
+      ENDIF.
       IF screen-group1 EQ 'M05'.
-        screen-active = COND #( WHEN p_rb3 EQ abap_true THEN 0 ELSE 1 ).
+        screen-required = 2.
       ENDIF.
       IF screen-group1 EQ 'M06'.
+        screen-active = COND #( WHEN p_rb3 EQ abap_true THEN 0 ELSE 1 ).
+      ENDIF.
+      IF screen-group1 EQ 'M07'.
         screen-active = COND #( WHEN p_rb3 EQ abap_true THEN 1 ELSE 0 ).
       ENDIF.
-      CLEAR: app_session->mv_tabname.
-      CASE abap_true.
-        WHEN p_rb1.
-          FREE: s_belnr, s_objnr.
-          app_session->mv_tabname = TEXT-t01.
-        WHEN p_rb2.
-          FREE: s_belnr, s_objnr.
-          app_session->mv_tabname = TEXT-t02.
-        WHEN p_rb3.
-          FREE: s_belnr, s_objnr.
-          app_session->mv_tabname = TEXT-t03.
-          IF screen-group1 EQ 'M03'.
-            screen-active = 0.
-          ENDIF.
-        WHEN p_rb4.
-          FREE: s_belnr, s_objnr.
-          app_session->mv_tabname = TEXT-t03.
-      ENDCASE.
       MODIFY SCREEN.
     ENDLOOP.
 
@@ -215,23 +309,26 @@ CLASS application IMPLEMENTATION .
   ENDMETHOD.                    "at_selection_screen_request
   METHOD start_of_selection.
 
-    IF sy-uname <> 'AHMETS' AND sy-uname <> 'AATAN'.
+*->Custom çalıştırılabilmesi için geliştirme yapıldı, sakın çalıştırma!!!
+    IF sy-uname <> 'AATAN' AND sy-uname <> 'AHMETS'  .
       MESSAGE s017(yclean) DISPLAY LIKE 'E'. RETURN.
     ENDIF.
 
     app->retrieve_dat(
-      EXPORTING
-        im_rldnr = p_rldnr
-        im_bukrs = p_bukrs
-        im_kokrs = p_kokrs
-        im_gjahr = p_gjahr
-        im_belnr = s_belnr[]
-        im_prll  = p_prll
-        im_rz12  = p_rz12
-        im_xshow = p_cb1
-      EXCEPTIONS
-        contains_error = 1
-        OTHERS         = 2 ).
+    EXPORTING
+      im_rldnr = p_rldnr
+      im_bukrs = p_bukrs
+      im_kokrs = p_kokrs
+      im_gjahr = p_gjahr
+      im_poper = p_poper
+      im_belnr = s_belnr[]
+      im_objnr = s_objnr[]
+      im_prll  = p_prll
+      im_rz12  = p_rz12
+      im_xshow = p_cb1
+    EXCEPTIONS
+      contains_error = 1
+      OTHERS         = 2 ).
     IF sy-subrc <> 0.
       MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
     ENDIF.
@@ -280,12 +377,27 @@ CLASS application IMPLEMENTATION .
 
     FREE: _values, _id.
     _id = 'P_PRLL'.
-    _values = VALUE #( BASE _values ( key = '01' ) ( key = '02' ) ( key = '03' ) ( key = '04' ) ( key = '06' ) ( key = '12' ) ).
-    CALL FUNCTION 'VRM_SET_VALUES'
-      EXPORTING
-        id     = _id
-        values = _values.
 
+    CASE im_kind.
+      WHEN 'DAYS'.
+        p_prll = 1.
+        _values = VALUE #( BASE _values ( key = '01' ) ).
+        CALL FUNCTION 'VRM_SET_VALUES'
+          EXPORTING
+            id     = _id
+            values = _values.
+
+      WHEN 'MONTHS'.
+        p_prll = 8.
+        _values = VALUE #( BASE _values ( key = '01' ) ( key = '02' ) ( key = '04' ) ( key = '06' ) ( key = '08' ) ( key = '10' ) ( key = '15' ) ).
+        CALL FUNCTION 'VRM_SET_VALUES'
+          EXPORTING
+            id     = _id
+            values = _values.
+
+      WHEN OTHERS.
+        MESSAGE e024(yclean).
+    ENDCASE.
 
   ENDMETHOD.                    "listbox_build
   METHOD f4_finanscal_perio.
@@ -341,56 +453,96 @@ CLASS application IMPLEMENTATION .
   ENDMETHOD.                    "f4_server_group
   METHOD rundat_control.
 
+    CHECK p_cb2 IS INITIAL.
+
     IF NOT p_rb4 IS INITIAL.
-      SELECT SINGLE COUNT(*) FROM coep
+      SELECT SINGLE coep~belnr
+        FROM v_coep_ori_view AS coep
         INNER JOIN acdoca
           ON acdoca~co_belnr EQ coep~belnr
           WHERE coep~kokrs EQ @p_kokrs
             AND acdoca~rldnr EQ @p_rldnr
             AND acdoca~rbukrs EQ @p_bukrs
             AND acdoca~gjahr EQ @p_gjahr
-            AND acdoca~objnr LIKE 'EO%'.
-      IF NOT sy-dbcnt IS INITIAL.
+            AND acdoca~poper EQ @p_poper
+            AND acdoca~co_belnr IN @s_belnr
+            AND acdoca~objnr LIKE 'EO%'
+            INTO @DATA(_coep).
+      IF sy-subrc IS INITIAL.
         MESSAGE s020(yclean) RAISING acdoca_not_deleted.
       ENDIF.
 
-      SELECT SINGLE COUNT(*) FROM cobk
+      SELECT SINGLE cobk~belnr
+        FROM cobk
         INNER JOIN acdoca
           ON acdoca~co_belnr EQ cobk~belnr
           WHERE cobk~kokrs EQ @p_kokrs
             AND acdoca~rldnr EQ @p_rldnr
             AND acdoca~rbukrs EQ @p_bukrs
             AND acdoca~gjahr EQ @p_gjahr
-            AND acdoca~objnr LIKE 'EO%'.
-      IF NOT sy-dbcnt IS INITIAL.
+            AND acdoca~poper EQ @p_poper
+            AND acdoca~co_belnr IN @s_belnr
+            AND acdoca~objnr LIKE 'EO%'
+            INTO @DATA(_cobk).
+      IF sy-subrc IS INITIAL.
         MESSAGE s020(yclean) RAISING acdoca_not_deleted.
       ENDIF.
 
-      SELECT SINGLE COUNT(*) FROM cosp_bak
+      SELECT SINGLE cosp_bak~objnr
+        FROM cosp_bak
         INNER JOIN acdoca
           ON acdoca~objnr EQ cosp_bak~objnr AND
              acdoca~gjahr EQ cosp_bak~gjahr
           WHERE acdoca~rldnr EQ @p_rldnr
             AND acdoca~rbukrs EQ @p_bukrs
             AND acdoca~gjahr EQ @p_gjahr
+            AND acdoca~poper EQ @p_poper
+            AND acdoca~co_belnr NE @space
+            AND acdoca~co_belnr NE @space
             AND acdoca~objnr LIKE 'EO%'
-            AND acdoca~co_belnr NE @space.
-      IF NOT sy-dbcnt IS INITIAL.
+            AND cosp_bak~objnr IN @s_objnr
+            INTO @DATA(_cosp_bak).
+      IF sy-subrc IS INITIAL.
         MESSAGE s020(yclean) RAISING acdoca_not_deleted.
       ENDIF.
 
-      SELECT SINGLE COUNT(*) FROM coka
+      SELECT SINGLE coka~objnr
+        FROM coka
         INNER JOIN acdoca
           ON acdoca~objnr EQ coka~objnr AND
              acdoca~gjahr EQ coka~gjahr
           WHERE acdoca~rldnr EQ @p_rldnr
             AND acdoca~rbukrs EQ @p_bukrs
             AND acdoca~gjahr EQ @p_gjahr
+            AND acdoca~poper EQ @p_poper
+            AND acdoca~co_belnr NE @space
+            AND acdoca~co_belnr NE @space
             AND acdoca~objnr LIKE 'EO%'
-            AND acdoca~co_belnr NE @space.
-      IF NOT sy-dbcnt IS INITIAL.
+            AND coka~objnr IN @s_objnr
+            INTO @DATA(_coka).
+      IF sy-subrc IS INITIAL.
         MESSAGE s020(yclean) RAISING acdoca_not_deleted.
       ENDIF.
+*// Count optimize edilemiyor!!! Canlıda kontrol edilecek...
+*      SELECT acdoca~objnr, acdoca~gjahr
+*        FROM acdoca
+*        INTO @DATA(v_acdoca)
+*        WHERE acdoca~rldnr EQ @p_rldnr
+*          AND acdoca~rbukrs EQ @p_bukrs
+*          AND acdoca~gjahr EQ @p_gjahr
+*          AND acdoca~objnr LIKE 'EO%'
+*          AND acdoca~co_belnr IN @s_belnr.
+*        SELECT COUNT(*) FROM coka
+*          WHERE objnr = v_acdoca-objnr
+*            AND gjahr = v_acdoca-gjahr.
+*        IF sy-dbcnt IS NOT INITIAL.
+*          DATA(_error) = abap_true.
+*          EXIT.
+*        ENDIF.
+*      ENDSELECT.
+*      IF _error EQ abap_true.
+*        MESSAGE s020(yclean) RAISING acdoca_not_deleted.
+*      ENDIF.
     ENDIF.
 
 
@@ -398,6 +550,8 @@ CLASS application IMPLEMENTATION .
   METHOD retrieve_dat.
 
     DATA: _where  TYPE string,
+          t_poper TYPE yclean_tt04,
+          t_budat TYPE yclean_tt01,
           t_belnr TYPE yclean_tt08,
           t_objnr TYPE yclean_tt09,
           _result TYPE string.
@@ -430,8 +584,11 @@ CLASS application IMPLEMENTATION .
 
         LOOP AT t_splitdat REFERENCE INTO DATA(_splitdat).
           CLEAR: mv_logid, mv_taskname.
-          mv_taskname = |COEP_{ p_kokrs }_{ p_gjahr }/T{ _splitdat->line }|.
+          mv_taskname = |COEP_{ p_kokrs }_{ p_gjahr }_{ p_poper }/T{ _splitdat->line }|.
           mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+
+          FREE: t_poper.
+          t_poper = VALUE #( ( poper = im_poper ) ).
 
           CALL FUNCTION 'YCLEAN_FM12' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
             EXPORTING
@@ -439,7 +596,7 @@ CLASS application IMPLEMENTATION .
               iv_bukrs       = im_bukrs
               iv_kokrs       = im_kokrs
               iv_gjahr       = im_gjahr
-              iv_poper       = t_splitdat
+              iv_poper       = t_poper
               iv_belnr       = t_belnr
               iv_logid       = mv_logid
             EXCEPTIONS
@@ -476,8 +633,11 @@ CLASS application IMPLEMENTATION .
 
         LOOP AT t_splitdat REFERENCE INTO _splitdat.
           CLEAR: mv_logid, mv_taskname.
-          mv_taskname = |COBK_{ p_kokrs }_{ p_gjahr }/T{ _splitdat->line }|.
+          mv_taskname = |COBK_{ p_kokrs }_{ p_gjahr }_{ p_poper }/T{ _splitdat->line }|.
           mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+
+          FREE: t_poper.
+          t_poper = VALUE #( ( poper = im_poper ) ).
 
           CALL FUNCTION 'YCLEAN_FM13' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
             EXPORTING
@@ -485,7 +645,7 @@ CLASS application IMPLEMENTATION .
               iv_bukrs       = im_bukrs
               iv_kokrs       = im_kokrs
               iv_gjahr       = im_gjahr
-              iv_poper       = t_splitdat
+              iv_poper       = t_poper
               iv_belnr       = t_belnr
               iv_logid       = mv_logid
             EXCEPTIONS
@@ -497,15 +657,15 @@ CLASS application IMPLEMENTATION .
           _output->display( ).
         ENDIF.
 *--------------------------------------------------------------------*
-*-&Step-3: Update From ACDOCA ->
+*-&Step-3: Clear From COSP_COKA ->
 *--------------------------------------------------------------------*
       WHEN p_rb3.
         FREE: t_objnr.
-        LOOP AT s_objnr REFERENCE INTO DATA(_objnr).
+        LOOP AT im_objnr REFERENCE INTO DATA(_objnr).
           APPEND VALUE #( objnr = _objnr->low ) TO t_objnr.
         ENDLOOP.
 
-        _output = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t02 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
+        _output = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t03 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
 
         NEW yclean_cl04( )->_monat_splitdat(
           EXPORTING
@@ -522,16 +682,69 @@ CLASS application IMPLEMENTATION .
 
         LOOP AT t_splitdat REFERENCE INTO _splitdat.
           CLEAR: mv_logid, mv_taskname.
-          mv_taskname = |COSP_COKA_{ p_bukrs }_{ p_gjahr }/T{ _splitdat->line }|.
+          mv_taskname = |COSP_COKA_{ p_bukrs }_{ p_gjahr }_{ p_poper }/T{ _splitdat->line }|.
           mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+
+          FREE: t_poper.
+          t_poper = VALUE #( ( poper = im_poper ) ).
 
           CALL FUNCTION 'YCLEAN_FM14' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
             EXPORTING
               iv_rldnr       = im_rldnr
               iv_bukrs       = im_bukrs
               iv_gjahr       = im_gjahr
-              iv_poper       = t_splitdat
+              iv_poper       = t_poper
               iv_objnr       = t_objnr
+              iv_logid       = mv_logid
+            EXCEPTIONS
+              contains_error = 1
+              OTHERS         = 2.
+          _output->write_text( |{ mv_logid ALPHA = OUT }| ).
+        ENDLOOP.
+        IF im_xshow EQ abap_false.
+          _output->display( ).
+        ENDIF.
+*--------------------------------------------------------------------*
+*-&Step-4: Update From ACDOCA ->
+*--------------------------------------------------------------------*
+      WHEN p_rb4.
+        FREE: t_belnr.
+        LOOP AT s_belnr REFERENCE INTO _belnr.
+          APPEND VALUE #( belnr = _belnr->low ) TO t_belnr.
+        ENDLOOP.
+
+        _output = cl_demo_output=>new( )->begin_section( |Günlük Bilgileri({ TEXT-t04 })| )->begin_section( |Nesne:| )->write_text( |YCLEAN| )->next_section( |Harici tanıtıcı:| ).
+
+        NEW yclean_cl04( )->_period_splitdat(
+          EXPORTING
+            im_spmon    = CONV #( |{ im_gjahr }{ im_poper+1(2) }| )
+            im_split    = im_prll
+          RECEIVING
+            rt_budatdat = DATA(t_budats)
+          EXCEPTIONS
+            contains_error = 1
+            OTHERS         = 2 ).
+        IF sy-subrc <> 0.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 RAISING contains_error.
+        ENDIF.
+
+        LOOP AT t_budats REFERENCE INTO DATA(_budats).
+          CLEAR: mv_logid, mv_taskname.
+          mv_taskname = |ACDOCA_{ p_bukrs }_{ p_gjahr }_{ p_poper }/T{ _budats->line }|.
+          mv_logid = |{ mv_taskname }-{ generate_guid( ) }|.
+
+          FREE: t_budat.
+          t_budat = VALUE #( FOR <lines> IN _budats->budat ( budat = <lines>-budat ) ).
+
+          CALL FUNCTION 'YCLEAN_FM15' STARTING NEW TASK mv_taskname DESTINATION IN GROUP p_rz12
+            EXPORTING
+              iv_rldnr       = im_rldnr
+              iv_bukrs       = im_bukrs
+              iv_gjahr       = im_gjahr
+              iv_poper       = im_poper
+              iv_budat       = t_budat
+              iv_belnr       = t_belnr
               iv_logid       = mv_logid
             EXCEPTIONS
               contains_error = 1

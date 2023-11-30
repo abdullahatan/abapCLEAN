@@ -18,7 +18,12 @@ FUNCTION yclean_fm14.
     iv_log_subobject = mc_logger-_subobject
     iv_extnumber = iv_logid ).
 
-  _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '002' iv_msgv1 = TEXT-t17 iv_msgv2 = |Yıl:{ iv_gjahr }| ).
+  IF lines( iv_poper ) GT 1.
+    CONCATENATE LINES OF iv_poper INTO DATA(_poper) SEPARATED BY '~'.
+  ELSE.
+    _poper = VALUE #( iv_poper[ 1 ]-poper OPTIONAL ).
+  ENDIF.
+  _logger->add_success( iv_msgid = mc_msg-id iv_msgno = '002' iv_msgv1 = TEXT-t17 iv_msgv2 = |Yıl:{ iv_gjahr }| iv_msgv3 = |Dönem:{ _poper  }| ).
   _logger->post( iv_refresh = abap_true ).
   TRY.
       yclean_cl04=>_rb3_rundat(

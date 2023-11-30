@@ -134,6 +134,36 @@
      <MSGNR>020</MSGNR>
      <TEXT>COEP, COBK, COSP ve COKA tabloları temizlenmeden ACDOCA güncellenemez!</TEXT>
     </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>021</MSGNR>
+     <TEXT>&amp; : Kayıt güncelleme işlemi başarıyla tamamlandı.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>022</MSGNR>
+     <TEXT>&amp; : Kayıt güncelleme işlemi başarısız! Hata: &amp; &amp; &amp;</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>023</MSGNR>
+     <TEXT>Kayıt dönemi boş geçilemez!</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>024</MSGNR>
+     <TEXT>Geçeriz bir işlem yürütüldü!</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>T</SPRSL>
+     <ARBGB>YCLEAN</ARBGB>
+     <MSGNR>025</MSGNR>
+     <TEXT>Tüm zorunlu alanları doldurun!</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

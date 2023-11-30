@@ -915,6 +915,88 @@
       </RSFDO>
      </DOCUMENTATION>
     </item>
+    <item>
+     <FUNCNAME>YCLEAN_FM15</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Clean: ACDOCA COPA Update</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <TYP>RLDNR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <TYP>BUKRS</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <TYP>GJAHR</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <TYP>POPER</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BUDAT</PARAMETER>
+       <TYP>YCLEAN_TT01</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <OPTIONAL>X</OPTIONAL>
+       <TYP>YCLEAN_TT08</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <TYP>BALNREXT</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>CONTAINS_ERROR</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_RLDNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Defter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUKRS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Şirket kodu</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_GJAHR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Mali yıl</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_POPER</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Kayıt dönemi</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BUDAT</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Budat Table Type Dat.</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_BELNR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>CO_BELNR Filter Data</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IV_LOGID</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Uygulama günlüğü: Harici tanıtıcı</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>CONTAINS_ERROR</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
    </FUNCTIONS>
    <I18N_TPOOL>
     <item>
