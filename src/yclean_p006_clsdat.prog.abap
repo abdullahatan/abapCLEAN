@@ -18,7 +18,10 @@ PARAMETERS:
   p_coep TYPE xfeld DEFAULT 'X' USER-COMMAND cbx,
   p_cosp TYPE xfeld DEFAULT 'X' USER-COMMAND cbx,
   p_coka TYPE xfeld DEFAULT 'X' USER-COMMAND cbx,
-  p_acdo TYPE xfeld DEFAULT 'X' USER-COMMAND cbx.
+  p_acdo TYPE xfeld DEFAULT 'X' USER-COMMAND cbx,
+  p_ceow TYPE xfeld DEFAULT ' ' USER-COMMAND cbx.
+
+DATA: mv_expert TYPE xfeld.
 
 CLASS lcl_sqlhelp DEFINITION.
 
@@ -72,8 +75,15 @@ CLASS lcl_sqlhelp DEFINITION.
       END OF mty_writing,
       mtt_writing TYPE STANDARD TABLE OF mty_writing.
 
+    TYPES:
+      BEGIN OF mty_poper,
+        poper TYPE poper,
+      END OF mty_poper,
+      mtt_popers TYPE SORTED TABLE OF mty_poper WITH UNIQUE KEY primary_key COMPONENTS poper.
+
     CLASS-DATA:
-      mo_sqlhelper TYPE REF TO lcl_sqlhelp.
+      mo_sqlhelper TYPE REF TO lcl_sqlhelp,
+      mt_poperdat  TYPE mtt_popers.
 
     CLASS-METHODS:
       instance_app
@@ -131,6 +141,11 @@ CLASS lcl_sqlhelp DEFINITION.
         RETURNING
           VALUE(rt_sumdat) TYPE mtt_sumdat
         EXCEPTIONS
+          record_not_available,
+      _coew_sql_count
+        RETURNING
+          VALUE(rt_sumdat) TYPE mtt_sumdat
+        EXCEPTIONS
           record_not_available.
 
 ENDCLASS.
@@ -144,6 +159,12 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
     ENDIF.
     ro_sqlhelper ?= mo_sqlhelper.
 
+    IF lcl_sqlhelp=>mt_poperdat[] IS INITIAL.
+      DO 16 TIMES.
+        INSERT VALUE #( poper = sy-index ) INTO TABLE lcl_sqlhelp=>mt_poperdat.
+      ENDDO.
+    ENDIF.
+
   ENDMETHOD.
   METHOD at_selection_screen.
 
@@ -152,6 +173,8 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
         IF p_cobk IS INITIAL AND p_coep IS INITIAL AND p_cosp IS INITIAL AND p_coka IS INITIAL AND p_acdo IS INITIAL.
           MESSAGE 'En az bir tablo seçimi yapınız!' TYPE 'S'.
         ENDIF.
+      WHEN 'EXPERT'.
+        mv_expert = abap_true.
       WHEN OTHERS.
     ENDCASE.
   ENDMETHOD.
@@ -160,6 +183,9 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
     LOOP AT SCREEN.
       IF screen-name CS 'P_BUKRS' OR screen-name CS 'P_KOKRS'.
         screen-input = 0.
+      ENDIF.
+      IF screen-name EQ 'P_CEOW'.
+        screen-active = COND #( WHEN mv_expert EQ abap_true THEN 1 ELSE 0 ).
       ENDIF.
       MODIFY SCREEN.
     ENDLOOP.
@@ -203,9 +229,17 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
         ms_sumdat-tabnam = 'COBK'.
         COLLECT ms_sumdat INTO rt_sumdat.
       ENDLOOP.
-
       FREE: mt_cobelnr.
     ENDWHILE.
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'COBK'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
 
   ENDMETHOD.
   METHOD _coep_sql_count.
@@ -245,6 +279,16 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
       FREE: mt_cobelnr.
     ENDWHILE.
 
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'COEP'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
+
   ENDMETHOD.
   METHOD _cosp_sql_count.
 
@@ -282,6 +326,16 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
 
       FREE: mt_acdoca.
     ENDWHILE.
+
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'COSP'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
 
   ENDMETHOD.
   METHOD _coka_sql_count.
@@ -321,6 +375,16 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
       FREE: mt_acdoca.
     ENDWHILE.
 
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'COKA'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
+
   ENDMETHOD.
   METHOD _acdo_sql_count.
 
@@ -351,6 +415,63 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
       FREE: mt_summary.
     ENDWHILE.
 
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'ACDOCA'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
+
+  ENDMETHOD.
+  METHOD _coew_sql_count.
+
+    CHECK NOT p_ceow IS INITIAL.
+
+    OPEN CURSOR WITH HOLD @DATA(cursor) FOR
+      SELECT DISTINCT rldnr, rbukrs, gjahr, poper, co_belnr AS belnr
+        FROM acdoca
+        WHERE rldnr EQ @p_rldnr
+          AND rbukrs EQ @p_bukrs
+          AND gjahr EQ @p_gjahr
+          AND poper IN @s_poper
+          AND co_belnr NE @space
+          AND objnr LIKE 'EO%'
+          GROUP BY rldnr, rbukrs, gjahr, poper, co_belnr.
+
+    FREE: mt_cobelnr, rt_sumdat.
+    WHILE sy-subrc = 0.
+      FETCH NEXT CURSOR @cursor INTO TABLE @mt_cobelnr PACKAGE SIZE 500000000.
+
+      SELECT acdoca~rldnr, acdoca~rbukrs, acdoca~gjahr, acdoca~poper, COUNT( * ) AS count
+        FROM v_coep_view AS coep
+          INNER JOIN @mt_cobelnr AS acdoca
+            ON acdoca~belnr EQ coep~belnr
+            WHERE coep~kokrs = @p_kokrs
+            GROUP BY acdoca~rldnr, acdoca~rbukrs, acdoca~gjahr, acdoca~poper
+            INTO TABLE @DATA(t_count).
+
+      LOOP AT t_count ASSIGNING FIELD-SYMBOL(<count_dat>).
+        CLEAR: ms_sumdat.
+        ms_sumdat = CORRESPONDING #( <count_dat> ).
+        ms_sumdat-tabnam = 'V_COEP'.
+        COLLECT ms_sumdat INTO rt_sumdat.
+      ENDLOOP.
+
+      FREE: mt_cobelnr.
+    ENDWHILE.
+    IF rt_sumdat[] IS INITIAL.
+      LOOP AT mt_poperdat REFERENCE INTO DATA(mr_poper) WHERE poper IN s_poper.
+        rt_sumdat = VALUE #( ( tabnam = 'V_COEP'
+                               rldnr = p_rldnr
+                               rbukrs = p_bukrs
+                               gjahr = p_gjahr
+                               poper = mr_poper->poper ) ).
+      ENDLOOP.
+    ENDIF.
+
   ENDMETHOD.
   METHOD run_sql_query.
 
@@ -359,6 +480,7 @@ CLASS lcl_sqlhelp IMPLEMENTATION.
     APPEND LINES OF _cosp_sql_count( ) TO rt_sumdat.
     APPEND LINES OF _coka_sql_count( ) TO rt_sumdat.
     APPEND LINES OF _acdo_sql_count( ) TO rt_sumdat.
+    APPEND LINES OF _coew_sql_count( ) TO rt_sumdat.
 
   ENDMETHOD.
   METHOD write_sql_resulst.

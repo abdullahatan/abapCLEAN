@@ -13,7 +13,6 @@ LOAD-OF-PROGRAM.
 AT SELECTION-SCREEN OUTPUT.
   _application->at_selection_screen_output( ).
 
-
 AT SELECTION-SCREEN.
   _application->at_selection_screen( ).
 

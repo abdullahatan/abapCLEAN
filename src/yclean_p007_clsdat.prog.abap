@@ -306,6 +306,9 @@ CLASS lcl_times IMPLEMENTATION.
             WHEN 'LOGNUMBER'.
               <fs_fcat>-no_out = abap_true.
               <fs_fcat>-tech = COND #( WHEN p_detail EQ abap_false THEN abap_true ).
+            WHEN 'AVERAG'.
+              lv_dtext = 'Ort.(DK)'.
+              <fs_fcat>-tech = p_detail.
             WHEN OTHERS.
           ENDCASE.
           IF NOT lv_dtext IS INITIAL.
